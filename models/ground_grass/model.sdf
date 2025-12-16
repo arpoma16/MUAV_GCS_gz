@@ -1,0 +1,51 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name="ground_grass">
+    <include>
+      <name>grass_1</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>0 0 0 0 0 0</pose>
+    </include>  
+    <include>
+      <name>grass_2</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>0 100 0 0 0 0</pose>
+    </include>
+    <include>
+      <name>grass_3</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>0 -100 0 0 0 0</pose>
+    </include>
+    <include>
+      <name>grass_4</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>-100 0 0 0 0 0</pose>
+    </include>
+
+    <include>
+      <name>grass_5</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>-100 100 0 0 0 0</pose>
+    </include>
+    <include>
+      <name>grass_6</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>-100 -100 0 0 0 0</pose>
+    </include>
+    <include>
+      <name>grass_7</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>100 0 0 0 0 0</pose>
+    </include>
+    <include>
+      <name>grass_8</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>100 -100 0 0 0 0</pose>
+    </include>
+    <include>
+      <name>grass_9</name>
+      <uri>model://grass_floor_textured</uri>
+      <pose>100 100 0 0 0 0</pose>
+    </include>
+  </model>
+</sdf>

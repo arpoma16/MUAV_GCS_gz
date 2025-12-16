@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_geometries>
+    <geometry id="plane-mesh" name="Plane">
+      <mesh>
+        <source id="plane-mesh-positions">
+          <float_array id="plane-mesh-positions-array" count="12">
+            -50 -50 0
+             50 -50 0
+             50  50 0
+            -50  50 0
+          </float_array>
+          <technique_common>
+            <accessor source="#plane-mesh-positions-array" count="4" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="plane-mesh-normals">
+          <float_array id="plane-mesh-normals-array" count="12">
+            0 0 1
+            0 0 1
+            0 0 1
+            0 0 1
+          </float_array>
+          <technique_common>
+            <accessor source="#plane-mesh-normals-array" count="4" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="plane-mesh-map">
+          <float_array id="plane-mesh-map-array" count="8">
+            0 0
+            50 0
+            50 50
+            0 50
+          </float_array>
+          <technique_common>
+            <accessor source="#plane-mesh-map-array" count="4" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="plane-mesh-vertices">
+          <input semantic="POSITION" source="#plane-mesh-positions"/>
+        </vertices>
+        <triangles count="2">
+          <input semantic="VERTEX" source="#plane-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#plane-mesh-map" offset="2" set="0"/>
+          <p>0 0 0  1 1 1  2 2 2  0 0 0  2 2 2  3 3 3</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Plane" name="Plane" type="NODE">
+        <instance_geometry url="#plane-mesh"/>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

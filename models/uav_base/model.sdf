@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='uav_base'>
+    <pose frame=''>0 0 0.07 0 0 0</pose>
+    <self_collide>false</self_collide>
+    <!-- BASE_LINK FRAME -->
+    <link name='uav_base_base'>
+      <pose frame=''>0 0 0 0 0 0</pose>
+
+      <visual name='uav_base_visual'>
+        <pose frame=''>0 0 0 1.5708 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://uav_base/meshes/uav_base.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <static>true</static>
+  </model>
+</sdf>

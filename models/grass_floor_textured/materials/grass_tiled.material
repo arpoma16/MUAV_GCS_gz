@@ -1,0 +1,19 @@
+material GrassTiled
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.8 0.8 0.8 1.0
+      diffuse 0.8 0.8 0.8 1.0
+      specular 0.1 0.1 0.1 1.0
+
+      texture_unit
+      {
+        texture grass.jpg
+        tex_address_mode wrap
+        scale 50.0 50.0
+      }
+    }
+  }
+}
