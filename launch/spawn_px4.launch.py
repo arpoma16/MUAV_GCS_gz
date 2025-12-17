@@ -1,141 +1,100 @@
 #!/usr/bin/env python3
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, TimerAction
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.conditions import IfCondition
 import os
 
+def launch_setup(context, *args, **kwargs):
 
-def generate_launch_description():
-    # Declare launch arguments
-    # Vehicle pose (x,y,z,roll,pitch,yaw)
-    x_arg = DeclareLaunchArgument('x', default_value='0', description='X position')
-    y_arg = DeclareLaunchArgument('y', default_value='0', description='Y position')
-    z_arg = DeclareLaunchArgument('z', default_value='0', description='Z position')
-    roll_arg = DeclareLaunchArgument('roll', default_value='0', description='Roll')
-    pitch_arg = DeclareLaunchArgument('pitch', default_value='0', description='Pitch')
-    yaw_arg = DeclareLaunchArgument('yaw', default_value='0', description='Yaw')
+    # Get launch configurations (for camera bridge)
+    vehicle = LaunchConfiguration('vehicle').perform(context)
+    ID = LaunchConfiguration('ID').perform(context)
+    world = LaunchConfiguration('world').perform(context)
+    namespace_val = LaunchConfiguration('namespace').perform(context)
+    enable_camera_val = LaunchConfiguration('enable_camera').perform(context)
 
-    # Vehicle model and config
-    vehicle_arg = DeclareLaunchArgument(
-        'vehicle',
-        default_value='gz_x500',
-        description='Vehicle model (e.g., gz_x500, gz_x500_mono_cam)'
-    )
+    # List to hold camera bridge actions
+    camera_actions = []
+    
+    # PX4 SITL launch
+    px4_sitl_node = OpaqueFunction(function=launch_px4)
+    
 
-    ID_arg = DeclareLaunchArgument('ID', default_value='1', description='Vehicle instance ID')
+    # Only create camera bridge if enabled
+    if enable_camera_val.lower() == 'true':
+        # Determine namespace for remapping
+        ns = f'px4_{ID}'
+        if namespace_val and namespace_val != '':
+            ns = namespace_val
 
-    autostart_arg = DeclareLaunchArgument(
-        'autostart',
-        default_value='4001',
-        description='PX4 autostart ID'
-    )
+        # Build topic names as strings (since we already performed the LaunchConfigurations)
+        gz_topic = f'/world/{world}/model/{vehicle}_{ID}/link/camera_link/sensor/camera/image'
+        ros_topic = f'/{ns}/camera/image_raw'
+        bridge_arg = f'{gz_topic}@sensor_msgs/msg/Image@gz.msgs.Image'
 
-    namespace_arg = DeclareLaunchArgument(
-        'namespace',
-        default_value='',
-        description='DDS namespace (e.g., px4_1, px4_2). If empty, no namespace is set.'
-    )
+        camera_bridge = Node(
+            package='ros_gz_bridge',
+            executable='parameter_bridge',
+            name=f'camera_bridge_{ID}',
+            arguments=[bridge_arg],
+            remappings=[(gz_topic, ros_topic)],
+            output='screen',
+            parameters=[{
+                'use_sim_time': True
+            }]
+        )
 
-    # Camera bridge option
-    enable_camera_arg = DeclareLaunchArgument(
-        'enable_camera',
-        default_value='false',
-        description='Enable camera bridge (only works with camera-equipped models)'
-    )
+        # Delay camera bridge to ensure PX4 and Gazebo are fully started
+        camera_bridge_delayed = TimerAction(
+            period=6.0,
+            actions=[camera_bridge]
+        )
+        camera_actions.append(camera_bridge_delayed)
 
-    world_arg = DeclareLaunchArgument(
-        'world',
-        default_value='default',
-        description='Gazebo world name'
-    )
-
-    # Get launch configurations
-    x = LaunchConfiguration('x')
-    y = LaunchConfiguration('y')
-    z = LaunchConfiguration('z')
-    roll = LaunchConfiguration('roll')
-    pitch = LaunchConfiguration('pitch')
-    yaw = LaunchConfiguration('yaw')
-    vehicle = LaunchConfiguration('vehicle')
-    ID = LaunchConfiguration('ID')
-    autostart = LaunchConfiguration('autostart')
-    namespace = LaunchConfiguration('namespace')
-    enable_camera = LaunchConfiguration('enable_camera')
-    world = LaunchConfiguration('world')
-
+    return [
+        px4_sitl_node,
+    ] + camera_actions
+    
+def launch_px4(context):
     # Get PX4 directory path
     px4_dir = find_px4()
-
-    # Build PX4 command with environment variables
-    # Example: PX4_GZ_STANDALONE=1 PX4_SYS_AUTOSTART=4001 PX4_GZ_MODEL_POSE="0,1" PX4_SIM_MODEL=gz_x500 ./build/px4_sitl_default/bin/px4 -i 2
-    px4_cmd = [
-        'bash', '-c',
-        ' '.join([
-            'PX4_GZ_STANDALONE=1',
-            ['PX4_SYS_AUTOSTART=', autostart],
-            # Construct pose string: "x,y,z,roll,pitch,yaw"
-            'PX4_GZ_MODEL_POSE=\\"',
-            x, ',', y, ',', z, ',', roll, ',', pitch, ',', yaw, '\\"',
-            ['PX4_SIM_MODEL=', vehicle],
-            # Add namespace if provided
-            PythonExpression([
-                '"PX4_UXRCE_DDS_NS=', namespace, '" if "', namespace, '" != "" else ""'
-            ]),
-            [px4_dir, '/build/px4_sitl_default/bin/px4'],
-            '-i', ID
-        ])
-    ]
-
-    px4_sitl_node = ExecuteProcess(
-        cmd=px4_cmd,
+    # Resolve launch configurations to actual values
+    x_val = context.launch_configurations['x']
+    y_val = context.launch_configurations['y']
+    z_val = context.launch_configurations['z']
+    roll_val = context.launch_configurations['roll']
+    pitch_val = context.launch_configurations['pitch']
+    yaw_val = context.launch_configurations['yaw']
+    vehicle_val = context.launch_configurations['vehicle']
+    ID_val = context.launch_configurations['ID']
+    autostart_val = context.launch_configurations['autostart']
+    namespace_val = context.launch_configurations['namespace']
+    # Build pose string
+    pose_str = f"{x_val},{y_val},{z_val},{roll_val},{pitch_val},{yaw_val}"
+    # Build environment variables dictionary
+    env_vars = {
+        'PX4_GZ_STANDALONE': '1',
+        'PX4_SYS_AUTOSTART': autostart_val,
+        'PX4_GZ_MODEL_POSE': pose_str,
+        'PX4_SIM_MODEL': f"gz_{vehicle_val}",
+    }
+    # Add namespace if provided
+    if namespace_val and namespace_val != '':
+        env_vars['PX4_UXRCE_DDS_NS'] = namespace_val
+    # Create PX4 process
+    px4_process = ExecuteProcess(
+        cmd=[
+            px4_dir + '/build/px4_sitl_default/bin/px4',
+            '-i', ID_val
+        ],
+        additional_env=env_vars,
         output='screen',
         shell=False,
-        name=['px4_', ID]
+        name=f'px4_{ID_val}'
     )
-
-    # Camera bridge node (only launched if enable_camera is true)
-    # Example: ros2 run ros_gz_bridge parameter_bridge /world/default/model/x500_mono_cam_2/link/camera_link/sensor/camera/image@sensor_msgs/msg/Image@gz.msgs.Image
-    camera_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name=['camera_bridge_', ID],
-        arguments=[
-            ['/world/', world, '/model/', vehicle, '_', ID, '/link/camera_link/sensor/camera/image@sensor_msgs/msg/Image@gz.msgs.Image']
-        ],
-        remappings=[
-            (["/world/", world, "/model/", vehicle, "_", ID, "/link/camera_link/sensor/camera/image"], [vehicle, "/camera/image_raw"]),
-        ],
-        output='screen',
-        condition=IfCondition(enable_camera),
-        parameters=[{
-            'use_sim_time': True
-        }]
-    )
-
-    return LaunchDescription([
-        # Declare all arguments
-        x_arg,
-        y_arg,
-        z_arg,
-        roll_arg,
-        pitch_arg,
-        yaw_arg,
-        vehicle_arg,
-        ID_arg,
-        autostart_arg,
-        namespace_arg,
-        enable_camera_arg,
-        world_arg,
-
-        # Launch PX4 SITL
-        px4_sitl_node,
-
-        # Launch camera bridge (conditional)
-        camera_bridge,
-    ])
+    return [px4_process]
 
 def find_px4():
     # Get PX4 directory path - try multiple methods
@@ -175,3 +134,55 @@ def find_px4():
         print("Set PX4_DIR environment variable or ensure 'px4' is in PATH")
 
     return px4_dir
+
+def generate_launch_description():
+    declared_arguments = []
+    # Declare launch arguments
+    # Vehicle pose (x,y,z,roll,pitch,yaw)
+    declared_arguments.append( 
+        DeclareLaunchArgument('x', default_value='0', description='X position')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('y', default_value='0', description='Y position')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('z', default_value='0', description='Z position')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('roll', default_value='0', description='Roll')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('pitch', default_value='0', description='Pitch')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('yaw', default_value='0', description='Yaw')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('vehicle',
+        default_value='x500_mono_cam',
+        description='Vehicle model (e.g., x500, x500_mono_cam)')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('ID', 
+        default_value='1', 
+        description='Vehicle instance ID mav_system_id = ID + 1')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('autostart', 
+            default_value='4001', 
+            description='PX4 autostart ID')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('namespace', 
+            default_value='', 
+            description='DDS namespace (e.g., px4_1, px4_2). If empty, no namespace is set.')
+        )
+    # Camera bridge option
+    declared_arguments.append(
+        DeclareLaunchArgument('enable_camera', default_value='false', description='Enable camera bridge (only works with camera-equipped models)')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('world', default_value='default', description='Gazebo world name')
+        )
+    
+    return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

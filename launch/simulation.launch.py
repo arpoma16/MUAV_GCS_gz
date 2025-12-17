@@ -29,7 +29,7 @@ def launch_setup(context, *args, **kwargs):
 
     gz_log_arg = LaunchConfiguration("gz_log_level").perform(context)
     headless = LaunchConfiguration("headless").perform(context)
-    paused = LaunchConfiguration("paused").perform(context)
+    autostart = LaunchConfiguration("autostart").perform(context)
 
     world_file = os.path.join(get_package_share_directory('muav_gcs_gz'), 'world', 'plazaAgua.sdf')
 
@@ -39,9 +39,9 @@ def launch_setup(context, *args, **kwargs):
 
     # Build flags
     # -s = headless (server only), -r = run on start (auto-play)
-    # If not using -r, simulation starts paused by default
+    # If not using -r, simulation starts paused and must be started manually
     headless_flag = '-s' if headless.lower() == 'true' else ''
-    run_flag = '' if paused.lower() == 'true' else '-r'
+    run_flag = '-r' if autostart.lower() == 'true' else ''
 
     gz_args = f'{headless_flag} {run_flag} --verbose {gz_log_level} {world_file}'.strip()
 
@@ -94,7 +94,7 @@ def generate_launch_description():
                               description="Log level for Gazebo Options: [dbg, msg, warn, error]"),
         DeclareLaunchArgument("headless", default_value="false",
                               description="Run Gazebo in headless mode (no GUI). Options: [true, false]"),
-        DeclareLaunchArgument("paused", default_value="true",
-                              description="Start Gazebo paused. Options: [true, false]"),
+        DeclareLaunchArgument("autostart", default_value="true",
+                              description="Start Gazebo automatically. Options: [true, false]"),
         OpaqueFunction(function=launch_setup)
     ])
