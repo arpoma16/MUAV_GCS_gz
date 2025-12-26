@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, TimerAction
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, TimerAction,IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 import os
+
+from ament_index_python.packages import get_package_share_directory
+
 
 def launch_setup(context, *args, **kwargs):
 
@@ -52,7 +56,18 @@ def launch_setup(context, *args, **kwargs):
             actions=[camera_bridge]
         )
         camera_actions.append(camera_bridge_delayed)
-
+        
+        camera_compress =  IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [os.path.join(get_package_share_directory("muav_gcs_offboard"), "launch", "image_republish_compress.launch.py")]
+            ),
+            launch_arguments=[
+                ("input_topic", f'/{ns}/camera/image_raw'),
+                ("output_topic", f'/{ns}/camera/image_compressed'),
+            ]
+        )
+        camera_actions.append(camera_compress)
+        
     return [
         px4_sitl_node,
     ] + camera_actions
@@ -80,9 +95,22 @@ def launch_px4(context):
         'PX4_GZ_MODEL_POSE': pose_str,
         'PX4_SIM_MODEL': f"gz_{vehicle_val}",
     }
+
+    # Add GZ_PARTITION if set in environment (critical for Docker/containerized environments)
+    if 'GZ_PARTITION' in os.environ:
+        env_vars['GZ_PARTITION'] = os.environ['GZ_PARTITION']
+        print(f"[DEBUG] GZ_PARTITION set to: {os.environ['GZ_PARTITION']}")
+    else:
+        print("[WARNING] GZ_PARTITION not found in environment!")
+
     # Add namespace if provided
     if namespace_val and namespace_val != '':
         env_vars['PX4_UXRCE_DDS_NS'] = namespace_val
+
+    # Debug: Print all env vars being passed to PX4
+    print(f"[DEBUG] Spawning PX4 with ID={ID_val}, pose={pose_str}")
+    print(f"[DEBUG] Environment variables: {env_vars}")
+
     # Create PX4 process
     px4_process = ExecuteProcess(
         cmd=[

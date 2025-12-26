@@ -6,7 +6,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 set (THIS_PACKAGE_INCLUDE_DEPENDS
-  ros_gz
   rclcpp
 )
 
@@ -20,7 +19,13 @@ install(DIRECTORY
   launch
   models
   world
+  config
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  scripts/startup_spawner.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/${PROJECT_NAME}.dsv.in")

@@ -16,6 +16,15 @@
           </mesh>
         </geometry>
       </visual>
+
+      <collision name='uav_base_collision'>
+        <pose frame=''>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 0.5 0.2</size>
+          </box>
+        </geometry>
+      </collision>
     </link>
     <static>true</static>
   </model>

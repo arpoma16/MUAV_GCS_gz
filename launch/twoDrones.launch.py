@@ -27,6 +27,10 @@ from ament_index_python.packages import get_package_share_directory
 
 def launch_setup(context, *args, **kwargs):
 
+    # Ensure GZ_PARTITION is set (critical for Docker/containerized environments)
+    if 'GZ_PARTITION' not in os.environ:
+        os.environ['GZ_PARTITION'] = 'docker_sim_harmonic'
+
     gz_log_arg = LaunchConfiguration("gz_log_level").perform(context)
     headless = LaunchConfiguration("headless").perform(context)
     autostart = LaunchConfiguration("autostart").perform(context)
@@ -81,12 +85,54 @@ def launch_setup(context, *args, **kwargs):
         parameters=[{'use_sim_time': True}],
         output='screen'
     )
+    
+    px4_2_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [os.path.join(get_package_share_directory("muav_gcs_gz"), "launch", "spawn_px4.launch.py")]
+        ),
+        launch_arguments=[
+            ("ID", '1'),
+            ("namespace", 'px4_2'),
+            ("enable_camera", 'True'),
+            ("autostart", '4001'),
+            ("x", '-10'),
+            ("y", '0'),
+        ]
+    )
+
+    px4_3_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [os.path.join(get_package_share_directory("muav_gcs_gz"), "launch", "spawn_px4.launch.py")]
+        ),
+        launch_arguments=[
+            ("ID", '2'),
+            ("namespace", 'px4_3'),
+            ("enable_camera", 'True'),
+            ("autostart", '4001'),
+            ("x", '10'),
+            ("y", '0'),
+        ]
+    )
+
+    # Add delays to drones for staggered spawning
+    # Increased delays to ensure Gazebo is fully ready
+    px4_2_delayed = TimerAction(
+        period=15.0,  # First drone waits 15 seconds for Gazebo to be fully ready
+        actions=[px4_2_launch]
+    )
+
+    px4_3_delayed = TimerAction(
+        period=20.0,  # Second drone waits 20 seconds (staggered by 5 seconds)
+        actions=[px4_3_launch]
+    )
 
     return [
         gz,
         gz_sim_bridge,
         gzSERVICE_bridge_spawn,
         gzSERVICE_bridge_delete,
+        px4_2_delayed,
+        px4_3_delayed,
     ]
 
 
