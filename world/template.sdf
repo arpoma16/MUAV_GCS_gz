@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <sdf version="1.9">
   <world name="default">
+  
     <physics type="ode">
       <max_step_size>0.004</max_step_size>
       <real_time_factor>1.0</real_time_factor>
@@ -15,10 +16,11 @@
           <speed>12</speed>
         </clouds>
       </sky>
-      <grid>true</grid>
+      <grid>false</grid>
       <ambient>0.5 0.5 0.5 0.3</ambient>
       <background>0.3 0.3 0.3 0.3</background>
-      <shadows>true</shadows>
+      <shadows>false</shadows>
+      <enable_instancing>true</enable_instancing>
     </scene>
     <include>
       <uri>model://ground_grass</uri>

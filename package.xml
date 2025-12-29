@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>ros_gz_image</exec_depend>
   <exec_depend>ros_gz_sim</exec_depend>
   <exec_depend>ros_gz_interfaces</exec_depend>
   <exec_depend>launch</exec_depend>

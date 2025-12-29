@@ -36,14 +36,18 @@ def launch_setup(context, *args, **kwargs):
         # Build topic names as strings (since we already performed the LaunchConfigurations)
         gz_topic = f'/world/{world}/model/{vehicle}_{ID}/link/camera_link/sensor/camera/image'
         ros_topic = f'/{ns}/camera/image_raw'
-        bridge_arg = f'{gz_topic}@sensor_msgs/msg/Image@gz.msgs.Image'
 
+        # Using ros_gz_image for more efficient camera bridging
+        # This provides automatic compression support via image_transport
         camera_bridge = Node(
-            package='ros_gz_bridge',
-            executable='parameter_bridge',
+            package='ros_gz_image',
+            executable='image_bridge',
             name=f'camera_bridge_{ID}',
-            arguments=[bridge_arg],
-            remappings=[(gz_topic, ros_topic)],
+            arguments=[gz_topic],
+            remappings=[
+                (gz_topic, ros_topic),
+                (f'{gz_topic}/compressed', f'{ros_topic}/compressed')
+            ],
             output='screen',
             parameters=[{
                 'use_sim_time': True
@@ -56,17 +60,10 @@ def launch_setup(context, *args, **kwargs):
             actions=[camera_bridge]
         )
         camera_actions.append(camera_bridge_delayed)
-        
-        camera_compress =  IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                [os.path.join(get_package_share_directory("muav_gcs_offboard"), "launch", "image_republish_compress.launch.py")]
-            ),
-            launch_arguments=[
-                ("input_topic", f'/{ns}/camera/image_raw'),
-                ("output_topic", f'/{ns}/camera/image_compressed'),
-            ]
-        )
-        camera_actions.append(camera_compress)
+
+        # NOTE: Compression node removed - ros_gz_image provides automatic compression
+        # via image_transport. Compressed images are available at /{ns}/camera/image_raw/compressed
+        # For H.264 compression, install: sudo apt install ros-humble-ffmpeg-image-transport
         
     return [
         px4_sitl_node,
