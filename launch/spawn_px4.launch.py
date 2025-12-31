@@ -91,6 +91,7 @@ def launch_px4(context):
         'PX4_SYS_AUTOSTART': autostart_val,
         'PX4_GZ_MODEL_POSE': pose_str,
         'PX4_SIM_MODEL': f"gz_{vehicle_val}",
+        'PX4_SIM_SPEED_FACTOR': '1',  # Changed to '1' (was '1.0')
     }
 
     # Add GZ_PARTITION if set in environment (critical for Docker/containerized environments)
@@ -99,6 +100,10 @@ def launch_px4(context):
         print(f"[DEBUG] GZ_PARTITION set to: {os.environ['GZ_PARTITION']}")
     else:
         print("[WARNING] GZ_PARTITION not found in environment!")
+        
+    if 'speedfactor' in os.environ:
+        env_vars['PX4_SIM_SPEED_FACTOR'] = os.environ['speedfactor']
+        print(f"[DEBUG] PX4_SIM_SPEED_FACTOR set to: {os.environ['speedfactor']}")
 
     # Add namespace if provided
     if namespace_val and namespace_val != '':

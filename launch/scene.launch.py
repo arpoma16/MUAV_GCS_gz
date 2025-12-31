@@ -3,6 +3,10 @@ import os
 import tempfile
 import xml.etree.ElementTree as ET
 import yaml
+import math
+import sys
+import subprocess
+import re
 
 from jsonschema import ValidationError
 
@@ -143,7 +147,7 @@ def launch_setup(context, *args, **kwargs):
                     ("ID", str(entity_data.get('id', 0))),
                     ("namespace", entity_data.get('ns', f'px4_{entity_data.get("id", 0)}')),
                     ("vehicle", entity_data.get('vehicle', 'x500_mono_cam')),
-                    ("enable_camera", str(entity_data.get('enable_camera', 'True'))),
+                    ("enable_camera", str(entity_data.get('enable_camera', 'false'))),
                     ("x", str(xyz[0])),
                     ("y", str(xyz[1])),
                     ("z", str(xyz[2])),
@@ -172,19 +176,77 @@ def launch_setup(context, *args, **kwargs):
         startup,
     ] + drones_to_spawn
 
+def calculate_magnetic_field_for_location(latitude, longitude, altitude=0):
+    """
+    Call the calculate_magnetic_field.py script to get magnetic field values.
+    Returns: (Bx, By, Bz) as string in scientific notation
+    """
+    try:
+        # Get the script path
+        pkg_share = get_package_share_directory('muav_gcs_gz')
+        script_path = os.path.join(pkg_share, 'scripts', 'calculate_magnetic_field.py')
+
+        # Call the script
+        result = subprocess.run(
+            ['python3', script_path, str(latitude), str(longitude), str(altitude)],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+
+        # Parse output to extract magnetic field line
+        # Looking for line like: "<magnetic_field>2.64e-05 -4.11e-07 3.50e-05</magnetic_field>"
+        for line in result.stdout.split('\n'):
+            if '<magnetic_field>' in line:
+                # Extract the values between tags
+                match = re.search(r'<magnetic_field>([^<]+)</magnetic_field>', line)
+                if match:
+                    mag_field = match.group(1).strip()
+                    print(f"[INFO] Calculated magnetic field for ({latitude:.2f}°, {longitude:.2f}°): {mag_field}")
+                    return mag_field
+
+        # Fallback if parsing failed
+        print(f"[WARNING] Could not parse magnetic field from script output, using default")
+        return "2.64e-05 -4.11e-07 3.50e-05"  # Default to Sevilla
+
+    except Exception as e:
+        print(f"[ERROR] Failed to calculate magnetic field: {e}")
+        print(f"[INFO] Using default magnetic field (Sevilla)")
+        return "2.64e-05 -4.11e-07 3.50e-05"
+
+
 def build_world_file(template_path, latitude, longitude, elevation):
-    """Builds a world file from a template, substituting in the given parameters."""
+    """
+    Builds a world file from a template, substituting in the given parameters.
+    Automatically calculates and replaces magnetic field based on location.
+    """
     with open(template_path, 'r') as file:
         sdf_content = file.read()
 
+    # Replace geographic coordinates
     sdf_content = sdf_content.replace('$(latitude)', str(latitude))
     sdf_content = sdf_content.replace('$(longitude)', str(longitude))
     sdf_content = sdf_content.replace('$(elevation)', str(elevation))
 
+    # Calculate magnetic field for this location using the script
+    magnetic_field_str = calculate_magnetic_field_for_location(latitude, longitude, elevation)
+
+    # Replace magnetic field in template
+    # Look for pattern: <magnetic_field>...</magnetic_field>
+    sdf_content = re.sub(
+        r'<magnetic_field>[^<]*</magnetic_field>(\s*<!--[^>]*-->)?',
+        f'<magnetic_field>{magnetic_field_str}</magnetic_field>  <!-- Auto-calculated for lat={latitude:.4f}, lon={longitude:.4f} -->',
+        sdf_content
+    )
+
+    print(f"[INFO] World file configured:")
+    print(f"  - Location: {latitude:.4f}°N, {longitude:.4f}°E, {elevation}m")
+    print(f"  - Magnetic field: {magnetic_field_str}")
+
     # Write to a temporary file
-    temp_world_file = tempfile.NamedTemporaryFile(delete=False, suffix='.sdf')
-    with open(temp_world_file.name, 'w') as file:
-        file.write(sdf_content)
+    temp_world_file = tempfile.NamedTemporaryFile(delete=False, suffix='.sdf', mode='w')
+    temp_world_file.write(sdf_content)
+    temp_world_file.close()
 
     return temp_world_file.name
 

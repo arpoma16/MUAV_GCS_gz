@@ -8,8 +8,9 @@
       <real_time_update_rate>250</real_time_update_rate>
     </physics>
     <gravity>0 0 -9.8</gravity>
-    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <magnetic_field>2.64e-05 -4.11e-07 3.50e-05</magnetic_field>  <!-- Default: Sevilla, Spain (WMM2020) -->
     <atmosphere type="adiabatic"/>
+    
     <scene>
       <sky>
         <clouds>
@@ -22,9 +23,7 @@
       <shadows>false</shadows>
       <enable_instancing>true</enable_instancing>
     </scene>
-    <include>
-      <uri>model://ground_grass</uri>
-    </include>
+
     <light name="sunUTC" type="directional">
       <pose>0 0 500 0 -0 0</pose>
       <cast_shadows>true</cast_shadows>
@@ -64,6 +63,10 @@
       <longitude_deg>$(longitude)</longitude_deg>
       <elevation>$(elevation)</elevation>
     </spherical_coordinates>
+
+    <include>
+      <uri>model://ground_grass</uri>
+    </include>
 
 
   </world>

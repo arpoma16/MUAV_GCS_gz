@@ -25,7 +25,14 @@ install(DIRECTORY
 
 install(PROGRAMS
   scripts/startup_spawner.py
+  scripts/diagnose_px4.py
+  scripts/calculate_magnetic_field.py
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY
+  scripts
+  DESTINATION share/${PROJECT_NAME}
 )
 
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/${PROJECT_NAME}.dsv.in")
