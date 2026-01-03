@@ -24,7 +24,6 @@ def launch_setup(context, *args, **kwargs):
     
     # PX4 SITL launch
     px4_sitl_node = OpaqueFunction(function=launch_px4)
-    
 
     # Only create camera bridge if enabled
     if enable_camera_val.lower() == 'true':
@@ -34,8 +33,8 @@ def launch_setup(context, *args, **kwargs):
             ns = namespace_val
 
         # Build topic names as strings (since we already performed the LaunchConfigurations)
-        gz_topic = f'/world/{world}/model/{vehicle}_{ID}/link/camera_link/sensor/camera/image'
-        ros_topic = f'/{ns}/camera/image_raw'
+        gz_topic = f'/world/{world}/model/{vehicle}_{ID}/link/camera_link/sensor/imager/image'
+        ros_topic = f'/{ns}/camera/image'
 
         # Using ros_gz_image for more efficient camera bridging
         # This provides automatic compression support via image_transport

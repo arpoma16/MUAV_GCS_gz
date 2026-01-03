@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import os
 import tempfile
@@ -147,7 +148,7 @@ def launch_setup(context, *args, **kwargs):
                     ("ID", str(entity_data.get('id', 0))),
                     ("namespace", entity_data.get('ns', f'px4_{entity_data.get("id", 0)}')),
                     ("vehicle", entity_data.get('vehicle', 'x500_mono_cam')),
-                    ("enable_camera", str(entity_data.get('enable_camera', 'false'))),
+                    ("enable_camera", str(entity_data.get('enable_camera', 'true'))),
                     ("x", str(xyz[0])),
                     ("y", str(xyz[1])),
                     ("z", str(xyz[2])),
