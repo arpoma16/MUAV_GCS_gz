@@ -1,0 +1,361 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="wind_turbine80m">
+    <!-- blade=28 -->
+    <!-- hub_height=80 -->
+    <pose>0 0 0 0 0 0</pose>
+    <static>false</static>
+
+    
+
+    <!-- ===================== TORRE ===================== -->
+    <link name="tower">
+      <!-- x=0 y=0 z=hub_height/2 -->
+      <pose>0 0 40 0 0 0</pose> <!-- Centro a mitad de altura -->
+      <inertial>
+        <!-- Masa muy alta para hacerla prácticamente inamovible -->
+        <mass>100000</mass>
+        <inertia>
+          <ixx>83333333</ixx>
+          <iyy>83333333</iyy>
+          <izz>1000</izz>
+        </inertia>
+      </inertial>
+      <!-- Colisión activa - el dron detectará el choque pero la torre no se moverá -->
+      <collision name="collision">
+        <geometry>
+          <cylinder>
+            <radius>1.5</radius>
+            <length>80</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1000000.0</kp>  <!-- Rigidez muy alta -->
+              <kd>100.0</kd>       <!-- Amortiguamiento -->
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <cylinder>
+            <radius>1.5</radius>
+            <length>80</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.8 0.8 0.8 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== GÓNDOLA (Nacelle) ===================== -->
+    <link name="nacelle">
+      <!-- x=0 y=0 z=hub_height + 1.5 -->
+      <pose>0 0 81.5 0 0 0</pose> <!-- Encima de la torre -->
+      <inertial>
+        <!-- Masa alta para estabilidad -->
+        <mass>5000</mass>
+        <inertia>
+          <ixx>833.33</ixx>
+          <iyy>833.33</iyy>
+          <izz>833.33</izz>
+        </inertia>
+      </inertial>
+      <!-- Colisión activa - detecta choques pero no se mueve -->
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>6 3 3</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1000000.0</kp>
+              <kd>100.0</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>6 3 3</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== ROTOR (Hub + 3 Aspas como un solo cuerpo) ===================== -->
+    <link name="rotor">
+      <!-- x=3 y=0 z=hub_height + 1.5 -->
+      <pose >3 0 81.5 0 0 0</pose> <!-- Delante de góndola-->
+      <inertial>
+        <!-- Masa total: hub(50) + 3 aspas(20*3) = 110 kg -->
+        <mass>110</mass>
+        <inertia>
+          <!-- Inercia aproximada del conjunto rotor -->
+          <ixx>42</ixx>
+          <iyy>800</iyy>  <!-- Mayor inercia en dirección perpendicular al eje -->
+          <izz>800</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <!-- Hub central -->
+      <collision name="hub_collision">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>1</radius>
+            <length>1</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1000000.0</kp>
+              <kd>100.0</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="hub_visual">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>1</radius>
+            <length>1</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 1 (0°) -->
+      <collision name="blade_1_collision">
+        <!-- x=0 y=0 z=blade/2 -->
+        <pose>0 0 14 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1000000.0</kp>
+              <kd>100.0</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="blade_1_visual">
+        <!-- x=0 y=0 z=blade/2 -->
+        <pose>0 0 14 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 2 (120°) -->
+      <collision name="blade_2_collision">
+        <!-- x=0 y=-sin(240°)*blade/2 z=cos(240°)*blade/2 -->
+        <pose>0 -12.12 -7 2.0944 0 0</pose>  <!-- 120° = 2.0944 rad -->
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1000000.0</kp>
+              <kd>100.0</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="blade_2_visual">
+        <!-- x=0 y=-sin(240°)*blade/2 z=cos(240°)*blade/2 -->
+        <pose> 0 -12.12 -7 2.0944 0 0</pose>  
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 3 (240°) -->
+      <collision name="blade_3_collision">
+        <!-- x=0 y=-sin(240°)*blade/2 z=cos(240°)*blade/2 -->
+        <pose>0  12.12 -7  4.1888 0 0</pose>  <!-- 240° = 4.1888 rad -->
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1000000.0</kp>
+              <kd>100.0</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="blade_3_visual">
+        <!-- x=0 y=-sin(240°)*blade/2 z=cos(240°)*blade/2 -->
+        <pose>0 12.12 -7  4.1888 0 0</pose> 
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== JOINTS ===================== -->
+
+    <!-- Torre fija al mundo -->
+    <joint name="tower_fixed" type="fixed">
+      <parent>world</parent>
+      <child>tower</child>
+    </joint>
+
+    <!-- Góndola rota sobre torre (orientación al viento - yaw) -->
+    <joint name="nacelle_yaw_joint" type="revolute">
+      <parent>tower</parent>
+      <child>nacelle</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <damping>2</damping>
+          <friction>0.1</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Rotor gira sobre góndola (generación de energía) -->
+    <joint name="rotor_joint" type="revolute">
+      <parent>nacelle</parent>
+      <child>rotor</child>
+      <axis>
+        <xyz>1 0 0</xyz>  <!-- Eje local del rotor (perpendicular a aspas) -->
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <damping>2</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ===================== PLUGINS ===================== -->
+
+    <!-- Control de velocidad del rotor -->
+    <plugin
+      filename="gz-sim-joint-controller-system"
+      name="gz::sim::systems::JointController">
+      <topic>/model/wind_turbine/rotor_speed_cmd</topic>
+      <joint_name>rotor_joint</joint_name>
+      <use_velocity_commands>true</use_velocity_commands>
+      <initial_velocity>1.0</initial_velocity>  <!-- 1 rad/s inicial -->
+    </plugin>
+
+    <!-- Control de orientación de la góndola -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>nacelle_yaw_joint</joint_name>
+      <topic>/model/wind_turbine/gondola_yaw_cmd</topic>
+      <p_gain>10.0</p_gain>
+      <i_gain>0.1</i_gain>
+      <d_gain>0.5</d_gain>
+      <i_max>1.0</i_max>
+      <i_min>-1.0</i_min>
+      <cmd_max>100</cmd_max>
+      <cmd_min>-100</cmd_min>
+    </plugin>
+
+  </model>
+</sdf>

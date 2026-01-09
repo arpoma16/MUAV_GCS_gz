@@ -1,17 +1,18 @@
-origin: [41.68722402644309, -8.847769488637084, 100]
-windTurbine_0: {type: windTurbine, pose: {xyz: [181.8, 43.3, 0], rpy: [0, 0, 0]}}
-windTurbine_1: {type: windTurbine, pose: {xyz: [-867.7, -350.1, 0], rpy: [0, 0, 0]}}
-windTurbine_2: {type: windTurbine, pose: {xyz: [-868.7, -283.1, 0], rpy: [0, 0, 0]}}
-windTurbine_3: {type: windTurbine, pose: {xyz: [-927.8, -219.1, 0], rpy: [0, 0, 0]}}
-windTurbine_4: {type: windTurbine, pose: {xyz: [-865.7, -220.7, 0], rpy: [0, 0, 0]}}
-windTurbine_5: {type: windTurbine, pose: {xyz: [-930.8, -283.8, 0], rpy: [0, 0, 0]}}
-windTurbine_6: {type: windTurbine, pose: {xyz: [-914.3, -353, 0], rpy: [0, 0, 0]}}
-windTurbine_7: {type: windTurbine, pose: {xyz: [-978.6, -353.2, 0], rpy: [0, 0, 0]}}
-windTurbine_8: {type: windTurbine, pose: {xyz: [-976.8, -286.6, 0], rpy: [0, 0, 0]}}
-windTurbine_9: {type: windTurbine, pose: {xyz: [-973, -221.9, 0], rpy: [0, 0, 0]}}
-windTurbine_10: {type: windTurbine, pose: {xyz: [-975.8, -182, 0], rpy: [0, 0, 0]}}
-windTurbine_11: {type: windTurbine, pose: {xyz: [-928.2, -179.5, 0], rpy: [0, 0, 0]}}
-windTurbine_12: {type: windTurbine, pose: {xyz: [-867.7, -177, 0], rpy: [0, 0, 0]}}
-base_13: {type: base, pose: {xyz: [0.5, 13.3, 0], rpy: [0, 0, 0]}}
-base_14: {type: base, pose: {xyz: [3.5, -13.6, 0], rpy: [0, 0, 0]}}
-px4_3: {type: drone, ns: px4_3, id: 2, pose: {xyz: [0.5, 13.3, 0], rpy: [0, 0, 0]}}
+origin: [41.68734389317842, -8.84768639812097, 100]
+windTurbine_0: {type: windTurbine, pose: {xyz: [174.9, 30, 0], rpy: [0, 0, 0]}}
+windTurbine_1: {type: windTurbine, pose: {xyz: [-845.3, -195, 0], rpy: [0, 0, 0]}}
+windTurbine_2: {type: windTurbine, pose: {xyz: [-845.3, -110, 0], rpy: [0, 0, 0]}}
+windTurbine_3: {type: windTurbine, pose: {xyz: [-849.8, -17.6, 0], rpy: [0, 0, 0]}}
+windTurbine_4: {type: windTurbine, pose: {xyz: [-743.9, -16.1, 0], rpy: [0, 0, 0]}}
+windTurbine_5: {type: windTurbine, pose: {xyz: [-746.9, -110, 0], rpy: [0, 0, 0]}}
+windTurbine_6: {type: windTurbine, pose: {xyz: [-745.4, -196.5, 0], rpy: [0, 0, 0]}}
+windTurbine_7: {type: windTurbine, pose: {xyz: [-970.5, -187.5, 0], rpy: [0, 0, 0]}}
+windTurbine_8: {type: windTurbine, pose: {xyz: [-970.5, -99.6, 0], rpy: [0, 0, 0]}}
+windTurbine_9: {type: windTurbine, pose: {xyz: [-972, -14.6, 0], rpy: [0, 0, 0]}}
+windTurbine_10: {type: windTurbine, pose: {xyz: [-972, 74.8, 0], rpy: [0, 0, 0]}}
+windTurbine_11: {type: windTurbine, pose: {xyz: [-851.3, 74.8, 0], rpy: [0, 0, 0]}}
+windTurbine_12: {type: windTurbine, pose: {xyz: [-748.4, 73.3, 0], rpy: [0, 0, 0]}}
+base_13: {type: base, pose: {xyz: [-6.4, 0, 0], rpy: [0, 0, 0]}}
+base_14: {type: base, pose: {xyz: [-3.4, -27, 0], rpy: [0, 0, 0]}}
+px4_3: {type: drone, ns: px4_3, id: 2, pose: {xyz: [-6.4, 0, 0], rpy: [0, 0, 0]}}
+px4_2: {type: drone, ns: px4_2, id: 1, pose: {xyz: [-3.4, -27, 0], rpy: [0, 0, 0]}}

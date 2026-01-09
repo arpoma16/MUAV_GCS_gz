@@ -89,6 +89,16 @@
       <uri>model://wind_turbine</uri>
       <pose>20.0 20.0 0 0 0 0</pose>
     </include>
-
+    <!-- wind_turbine_1 -->
+    <include>
+      <name>wind_turbine_2</name>
+      <uri>model://wind_turbine30m</uri>
+      <pose>40.0 20.0 0 0 0 0</pose>
+    </include>
+    <include>
+      <name>wind_turbine_3</name>
+      <uri>model://wind_turbine80m</uri>
+      <pose>40.0 40.0 0 0 0 0</pose>
+    </include>
   </world>
 </sdf>

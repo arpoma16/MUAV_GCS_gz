@@ -66,7 +66,7 @@ class StartupSpawner(Node):
             if entity_type == 'base':
                 model_name = 'uav_base'
             elif entity_type == 'windTurbine':
-                model_name = 'wind_turbine'
+                model_name = 'wind_turbine80m'
             else:
                 self.get_logger().warn(f'Unknown entity type: {entity_type}')
                 continue
@@ -76,7 +76,7 @@ class StartupSpawner(Node):
             rpy = pose.get('rpy', [0, 0, 0])
 
             # Spawn the entity
-            self.spawn_entity(entity_name, model_name, xyz, rpy)
+            self.spawn_entity_with_include(entity_name, model_name, xyz, rpy)
 
     def spawn_entity(self, entity_name, model_name, xyz, rpy):
         """Spawn a single entity in Gazebo using ros_gz_sim create"""
@@ -106,6 +106,49 @@ class StartupSpawner(Node):
             '-R', str(rpy[0]),
             '-P', str(rpy[1]),
             '-Y', str(rpy[2]),
+            '-world', 'default'
+        ]
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            if result.returncode == 0:
+                self.get_logger().info(f'Successfully spawned: {entity_name}')
+            else:
+                self.get_logger().error(f'Failed to spawn {entity_name}: {result.stderr}')
+        except subprocess.TimeoutExpired:
+            self.get_logger().error(f'Timeout spawning {entity_name}')
+        except Exception as e:
+            self.get_logger().error(f'Error spawning {entity_name}: {str(e)}')
+
+    def spawn_entity_with_include(self, entity_name, model_name, xyz, rpy):
+        """Spawn a single entity using <include> with model URI
+
+        This method uses the model:// URI scheme which requires GZ_SIM_RESOURCE_PATH
+        to be properly configured to find the models directory.
+
+        Advantages:
+        - More efficient (doesn't read entire SDF file)
+        - Better Gazebo practice
+        - Allows model caching and resource sharing
+        """
+
+        self.get_logger().info(f'Spawning {entity_name} ({model_name}) at {xyz} using <include>')
+
+        # Create SDF with include directive - pose must be inside <include>
+        sdf_string = f"""<?xml version="1.0" ?>
+        <sdf version="1.6">
+            <model name="{entity_name}">
+                <include>
+                    <uri>model://{model_name}</uri>
+                    <pose>{xyz[0]} {xyz[1]} {xyz[2]} {rpy[0]} {rpy[1]} {rpy[2]}</pose>
+                </include>
+            </model>
+        </sdf>"""
+
+        # Use ros2 run ros_gz_sim create with -string parameter
+        cmd = [
+            'ros2', 'run', 'ros_gz_sim', 'create',
+            '-string', sdf_string,
             '-world', 'default'
         ]
 

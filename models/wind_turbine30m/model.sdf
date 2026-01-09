@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="wind_turbine30m">
+    <pose>0 0 0 0 0 0</pose>
+    <static>false</static>
+
+    <!-- ===================== TORRE ===================== -->
+    <link name="tower">
+      <pose>0 0 15 0 0 0</pose> <!-- Centro a mitad de altura -->
+      <inertial>
+        <mass>1000</mass>
+        <inertia>
+          <ixx>833.33</ixx>
+          <iyy>833.33</iyy>
+          <izz>10</izz>
+        </inertia>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <cylinder>
+            <radius>1</radius>
+            <length>30</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <cylinder>
+            <radius>1</radius>
+            <length>30</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.8 0.8 0.8 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== GÓNDOLA (Nacelle) ===================== -->
+    <link name="nacelle">
+      <pose>0 0 31 0 0 0</pose> <!-- Encima de la torre -->
+      <inertial>
+        <mass>100</mass>
+        <inertia>
+          <ixx>8.33</ixx>
+          <iyy>8.33</iyy>
+          <izz>8.33</izz>
+        </inertia>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>4 2 2</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>4 2 2</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== ROTOR (Hub + 3 Aspas como un solo cuerpo) ===================== -->
+    <link name="rotor">
+      <pose>2 0 31 0 0 0</pose> <!-- Delante de góndola-->
+      <inertial>
+        <!-- Masa total: hub(50) + 3 aspas(20*3) = 110 kg -->
+        <mass>110</mass>
+        <inertia>
+          <!-- Inercia aproximada del conjunto rotor -->
+          <ixx>42</ixx>
+          <iyy>800</iyy>  <!-- Mayor inercia en dirección perpendicular al eje -->
+          <izz>800</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <!-- Hub central -->
+      <collision name="hub_collision">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.4</radius>
+            <length>0.5</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="hub_visual">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.4</radius>
+            <length>0.5</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 1 (0°) -->
+      <collision name="blade_1_collision">
+        <pose>0 0 5 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.3 0.6 10.0</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="blade_1_visual">
+        <pose>0 0 5 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.3 0.6 10.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 2 (120°) -->
+      <collision name="blade_2_collision">
+        <pose>0 -4.33 -2.5 2.0944 0 0</pose>  <!-- 120° = 2.0944 rad -->
+        <geometry>
+          <box>
+            <size>0.3 0.6 10.0</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="blade_2_visual">
+        <pose> 0 -4.33 -2.5 2.0944 0 0</pose>  
+        <geometry>
+          <box>
+            <size>0.3 0.6 10.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 3 (240°) -->
+      <collision name="blade_3_collision">
+        <pose>0  4.33 -2.5  4.1888 0 0</pose>  <!-- 240° = 4.1888 rad -->
+        <geometry>
+          <box>
+            <size>0.3 0.6 10.0</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="blade_3_visual">
+        <pose>0 4.33 -2.5  4.1888 0 0</pose> 
+        <geometry>
+          <box>
+            <size>0.3 0.6 10.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== JOINTS ===================== -->
+
+    <!-- Torre fija al mundo -->
+    <joint name="tower_fixed" type="fixed">
+      <parent>world</parent>
+      <child>tower</child>
+    </joint>
+
+    <!-- Góndola rota sobre torre (orientación al viento - yaw) -->
+    <joint name="nacelle_yaw_joint" type="revolute">
+      <parent>tower</parent>
+      <child>nacelle</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>0.1</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Rotor gira sobre góndola (generación de energía) -->
+    <joint name="rotor_joint" type="revolute">
+      <parent>nacelle</parent>
+      <child>rotor</child>
+      <axis>
+        <xyz>1 0 0</xyz>  <!-- Eje local del rotor (perpendicular a aspas) -->
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.1</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ===================== PLUGINS ===================== -->
+
+    <!-- Control de velocidad del rotor -->
+    <plugin
+      filename="gz-sim-joint-controller-system"
+      name="gz::sim::systems::JointController">
+      <topic>/model/wind_turbine/rotor_speed_cmd</topic>
+      <joint_name>rotor_joint</joint_name>
+      <use_velocity_commands>true</use_velocity_commands>
+      <initial_velocity>1.0</initial_velocity>  <!-- 1 rad/s inicial -->
+    </plugin>
+
+    <!-- Control de orientación de la góndola -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>nacelle_yaw_joint</joint_name>
+      <topic>/model/wind_turbine/gondola_yaw_cmd</topic>
+      <p_gain>10.0</p_gain>
+      <i_gain>0.1</i_gain>
+      <d_gain>0.5</d_gain>
+      <i_max>1.0</i_max>
+      <i_min>-1.0</i_min>
+      <cmd_max>100</cmd_max>
+      <cmd_min>-100</cmd_min>
+    </plugin>
+
+  </model>
+</sdf>
