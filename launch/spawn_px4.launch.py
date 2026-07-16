@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, TimerAction,IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, TimerAction, IncludeLaunchDescription, RegisterEventHandler
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -82,6 +83,7 @@ def launch_px4(context):
     ID_val = context.launch_configurations['ID']
     autostart_val = context.launch_configurations['autostart']
     namespace_val = context.launch_configurations['namespace']
+    gz_model_name_val = context.launch_configurations['gz_model_name']
     # Build pose string
     pose_str = f"{x_val},{y_val},{z_val},{roll_val},{pitch_val},{yaw_val}"
     # Build environment variables dictionary
@@ -89,9 +91,16 @@ def launch_px4(context):
         'PX4_GZ_STANDALONE': '1',
         'PX4_SYS_AUTOSTART': autostart_val,
         'PX4_GZ_MODEL_POSE': pose_str,
-        'PX4_SIM_MODEL': f"gz_{vehicle_val}",
         'PX4_SIM_SPEED_FACTOR': '1',  # Changed to '1' (was '1.0')
     }
+
+    if gz_model_name_val and gz_model_name_val != '':
+        # Model was already spawned externally: attach to it by exact name,
+        # PX4_SIM_MODEL and PX4_GZ_MODEL_NAME are mutually exclusive.
+        env_vars['PX4_GZ_MODEL_NAME'] = gz_model_name_val
+        print(f"[DEBUG] Attaching to existing Gazebo model: {gz_model_name_val}")
+    else:
+        env_vars['PX4_SIM_MODEL'] = f"gz_{vehicle_val}"
 
     # Add GZ_PARTITION if set in environment (critical for Docker/containerized environments)
     if 'GZ_PARTITION' in os.environ:
@@ -123,6 +132,40 @@ def launch_px4(context):
         shell=False,
         name=f'px4_{ID_val}'
     )
+
+    if gz_model_name_val and gz_model_name_val != '':
+        # Spawn the custom model first, and only start PX4 once the spawn
+        # process has exited (it blocks until Gazebo's create service replies),
+        # so PX4_GZ_MODEL_NAME always finds an existing model to attach to.
+        world_val = context.launch_configurations['world']
+        model_path = os.path.join(
+            get_package_share_directory('muav_gcs_gz'), 'models',
+            vehicle_val, 'model.sdf'
+        )
+
+        spawn_process = ExecuteProcess(
+            cmd=[
+                'ros2', 'run', 'ros_gz_sim', 'create',
+                '-name', gz_model_name_val,
+                '-file', model_path,
+                '-x', x_val, '-y', y_val, '-z', z_val,
+                '-R', roll_val, '-P', pitch_val, '-Y', yaw_val,
+                '-world', world_val,
+            ],
+            output='screen',
+            shell=False,
+            name=f'gz_spawn_{gz_model_name_val}'
+        )
+
+        px4_after_spawn = RegisterEventHandler(
+            OnProcessExit(
+                target_action=spawn_process,
+                on_exit=[px4_process],
+            )
+        )
+
+        return [spawn_process, px4_after_spawn]
+
     return [px4_process]
 
 def find_px4():
@@ -202,9 +245,15 @@ def generate_launch_description():
             description='PX4 autostart ID')
         )
     declared_arguments.append(
-        DeclareLaunchArgument('namespace', 
-            default_value='', 
+        DeclareLaunchArgument('namespace',
+            default_value='',
             description='DDS namespace (e.g., px4_1, px4_2). If empty, no namespace is set.')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('gz_model_name',
+            default_value='',
+            description='Exact name of a model already spawned in Gazebo (PX4_GZ_MODEL_NAME). '
+                         'If set, PX4 attaches to it instead of spawning "vehicle" itself.')
         )
     # Camera bridge option
     declared_arguments.append(

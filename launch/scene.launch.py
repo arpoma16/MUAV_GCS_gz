@@ -156,6 +156,7 @@ def launch_setup(context, *args, **kwargs):
                     ("pitch", str(rpy[1])),
                     ("yaw", str(rpy[2])),
                     ("autostart", '4001'),
+                    ("gz_model_name", entity_data.get('gz_model_name', '')),
                 ]
             )
 
