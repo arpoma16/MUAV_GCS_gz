@@ -1,0 +1,113 @@
+<?xml version='1.0' ?>
+<sdf version="1.6">
+  <model name="vessel_a">
+    <plugin 
+        filename="gz-sim-velocity-control-system"
+        name="gz::sim::systems::VelocityControl">
+        <initial_linear> 0 0 0 </initial_linear>
+        <initial_angular> 0 0 0 </initial_angular>
+    </plugin>
+    <plugin
+        filename="gz-sim-odometry-publisher-system"
+        name="gz::sim::systems::OdometryPublisher">
+        <odom_frame>vessel_a</odom_frame>
+    </plugin>
+    <static>false</static>
+    <link name="vessel_link">
+      <enable_wind>true</enable_wind>
+      <inertial>
+        <mass>1500.0</mass>
+        <inertia>
+          <ixx>3625</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>25000</iyy>
+          <iyz>0.0</iyz>
+          <izz>27625</izz>
+        </inertia>
+      </inertial>
+      <visual name="visual">
+        <pose>0 0 0 0 0 -1.5708</pose>
+        <geometry>
+          <mesh>
+            <uri>meshes/Boat05.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+              <albedo_map>materials/textures/Boat05_Albedo.jpg</albedo_map>
+              <normal_map>materials/textures/Boat05_Normal.png</normal_map>
+              <roughness_map>materials/textures/Boat05_Roughness.jpg</roughness_map>
+              <metalness_map>materials/textures/Boat05_Metalness.png</metalness_map>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+      <collision name="collision">
+        <pose>0 0 0 0 0 -1.5708</pose>
+        <geometry>
+          <mesh>
+            <uri>meshes/Boat05.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+    </link>
+    <link name="landing_platform_outside">
+        <pose relative_to="vessel_link"> -3 0 0.65 0 0 0 </pose>
+        <visual name="visual">
+            <geometry> 
+                <box> 
+                 <size> 2.0 2.0 0.3 </size>
+                </box>
+            </geometry>    
+            <material>
+                <ambient>1.0 0.0 0.0 1.0</ambient>
+                <diffuse>1.0 0.0 0.0 1.0</diffuse>
+                <specular>1.0 0.0 0.0 1.0</specular>
+            </material>
+        </visual>
+        <collision name="collision">
+            <geometry> 
+                <box> 
+                 <size> 2.0 2.0 0.3 </size> 
+                </box>
+            </geometry>
+        </collision>
+     </link>
+     <link name="landing_platform_inside">
+        <pose relative_to="landing_platform_outside"> 0 0 0 0 0 0 </pose>
+        <visual name="visual">
+            <geometry> 
+                <box> 
+                 <size> 1.0 1.0 0.35 </size>
+                </box>
+            </geometry>    
+            <material>
+                <ambient>0.1 0.1 0.1 1.0</ambient>
+                <diffuse>0.1 0.1 0.1 1.0</diffuse>
+                <specular>0.1 0.1 0.1 1.0</specular>
+            </material>
+        </visual>
+        <collision name="collision">
+            <geometry> 
+                <box> 
+                 <size> 1.0 1.0 0.35 </size>
+                </box>
+            </geometry>
+        </collision>
+    </link>
+ 
+    <joint name="fixed_joint_1" type="fixed">
+        <parent>vessel_link</parent>
+        <child>landing_platform_outside</child>
+   </joint>
+     <joint name="fixed_joint_2" type="fixed">
+        <parent>landing_platform_outside</parent>
+        <child>landing_platform_inside</child>
+   </joint>   
+
+  </model>
+</sdf>

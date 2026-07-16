@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <model name="x500_gimbal_collision">
+
+    <!-- Inherit the full x500_gimbal model (frame + motors + gimbal + plugins) -->
+    <include merge="true">
+      <uri>model://x500_gimbal</uri>
+    </include>
+
+    <!-- ================================================================
+         FORWARD distance sensor (+X direction)
+         Mounted at the front of the drone, pointing forward.
+    ================================================================ -->
+    <link name="distance_sensor_forward_link">
+      <pose>0.12 0 0.0 0 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
+      </inertial>
+      <sensor name="distance_forward" type="gpu_lidar">
+        <!-- Sensor pointing in +X (no rotation needed, default) -->
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <topic>distance/forward</topic>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </link>
+    <joint name="distance_forward_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>distance_sensor_forward_link</child>
+    </joint>
+
+    <!-- ================================================================
+         BACKWARD distance sensor (-X direction)
+         Mounted at the rear, pointing backward (rotated 180 deg in Z).
+    ================================================================ -->
+    <link name="distance_sensor_backward_link">
+      <pose>-0.12 0 0.0 0 0 3.14159</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
+      </inertial>
+      <sensor name="distance_backward" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <topic>distance/backward</topic>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </link>
+    <joint name="distance_backward_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>distance_sensor_backward_link</child>
+    </joint>
+
+    <!-- ================================================================
+         LEFT distance sensor (+Y direction)
+         Mounted on the left side, pointing left (rotated -90 deg in Z).
+    ================================================================ -->
+    <link name="distance_sensor_left_link">
+      <pose>0 0.12 0.0 0 0 1.5708</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
+      </inertial>
+      <sensor name="distance_left" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <topic>distance/left</topic>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </link>
+    <joint name="distance_left_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>distance_sensor_left_link</child>
+    </joint>
+
+    <!-- ================================================================
+         RIGHT distance sensor (-Y direction)
+         Mounted on the right side, pointing right (rotated +90 deg in Z).
+    ================================================================ -->
+    <link name="distance_sensor_right_link">
+      <pose>0 -0.12 0.0 0 0 -1.5708</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
+      </inertial>
+      <sensor name="distance_right" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <topic>distance/right</topic>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </link>
+    <joint name="distance_right_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>distance_sensor_right_link</child>
+    </joint>
+
+    <!-- ================================================================
+         UP distance sensor (+Z direction)
+         Mounted on top of the frame, pointing upward (rotated -90 deg in Y).
+    ================================================================ -->
+    <link name="distance_sensor_up_link">
+      <pose>0 0 0.08 0 -1.5708 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
+      </inertial>
+      <sensor name="distance_up" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <topic>distance/up</topic>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </link>
+    <joint name="distance_up_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>distance_sensor_up_link</child>
+    </joint>
+
+    <!-- ================================================================
+         DOWN distance sensor (-Z direction)
+         Mounted on the bottom, pointing downward (rotated +90 deg in Y).
+         Useful also as altimeter.
+    ================================================================ -->
+    <link name="distance_sensor_down_link">
+      <pose>0 0 -0.05 0 1.5708 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
+      </inertial>
+      <sensor name="distance_down" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <topic>distance/down</topic>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>20.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </link>
+    <joint name="distance_down_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>distance_sensor_down_link</child>
+    </joint>
+
+  </model>
+</sdf>

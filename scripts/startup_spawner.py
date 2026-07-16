@@ -66,7 +66,9 @@ class StartupSpawner(Node):
             if entity_type == 'base':
                 model_name = 'uav_base'
             elif entity_type == 'windTurbine':
-                model_name = 'wind_turbine80m'
+                model_name = 'wind_turbine80m_static'
+            elif entity_type == 'building_short':
+                model_name = 'building_short'
             else:
                 self.get_logger().warn(f'Unknown entity type: {entity_type}')
                 continue

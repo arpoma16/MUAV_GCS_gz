@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="wind_turbine80m_static">
+    <!-- blade=28 hub_height=80 -->
+    <pose>0 0 0 0 0 0</pose>
+    <static>true</static>
+
+    <!-- ===================== TORRE ===================== -->
+    <link name="tower">
+      <pose>0 0 40 0 0 0</pose>
+      <collision name="collision">
+        <geometry>
+          <cylinder>
+            <radius>1.5</radius>
+            <length>80</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <cylinder>
+            <radius>1.5</radius>
+            <length>80</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.8 0.8 0.8 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== GÓNDOLA (Nacelle) ===================== -->
+    <link name="nacelle">
+      <pose>0 0 81.5 0 0 0</pose>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>6 3 3</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>6 3 3</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== ROTOR (Hub + 3 Aspas) ===================== -->
+    <link name="rotor">
+      <pose>3 0 81.5 0 0 0</pose>
+
+      <!-- Hub central -->
+      <collision name="hub_collision">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>1</radius>
+            <length>1</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="hub_visual">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>1</radius>
+            <length>1</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 1 (0°) -->
+      <collision name="blade_1_collision">
+        <pose>0 0 14 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="blade_1_visual">
+        <pose>0 0 14 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 2 (120°) -->
+      <collision name="blade_2_collision">
+        <pose>0 -12.12 -7 2.0944 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="blade_2_visual">
+        <pose>0 -12.12 -7 2.0944 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Aspa 3 (240°) -->
+      <collision name="blade_3_collision">
+        <pose>0 12.12 -7 4.1888 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="blade_3_visual">
+        <pose>0 12.12 -7 4.1888 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 1 28.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.95 0.95 0.95 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================== JOINTS (todos fixed) ===================== -->
+    <joint name="tower_world" type="fixed">
+      <parent>world</parent>
+      <child>tower</child>
+    </joint>
+
+    <joint name="nacelle_tower" type="fixed">
+      <parent>tower</parent>
+      <child>nacelle</child>
+    </joint>
+
+    <joint name="rotor_nacelle" type="fixed">
+      <parent>nacelle</parent>
+      <child>rotor</child>
+    </joint>
+
+  </model>
+</sdf>

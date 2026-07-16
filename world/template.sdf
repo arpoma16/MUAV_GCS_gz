@@ -68,6 +68,12 @@
       <uri>model://ground_grass</uri>
     </include>
 
+    <include>
+      <name>ocean</name>
+      <uri>model://coast_waves</uri>
+      <pose>0 100 -0.1 0 0 0</pose>
+    </include>
+
 
   </world>
 </sdf>

@@ -1,18 +1,20 @@
-origin: [41.68734389317842, -8.84768639812097, 100]
-windTurbine_0: {type: windTurbine, pose: {xyz: [174.9, 30, 0], rpy: [0, 0, 0]}}
-windTurbine_1: {type: windTurbine, pose: {xyz: [-845.3, -195, 0], rpy: [0, 0, 0]}}
-windTurbine_2: {type: windTurbine, pose: {xyz: [-845.3, -110, 0], rpy: [0, 0, 0]}}
-windTurbine_3: {type: windTurbine, pose: {xyz: [-849.8, -17.6, 0], rpy: [0, 0, 0]}}
-windTurbine_4: {type: windTurbine, pose: {xyz: [-743.9, -16.1, 0], rpy: [0, 0, 0]}}
-windTurbine_5: {type: windTurbine, pose: {xyz: [-746.9, -110, 0], rpy: [0, 0, 0]}}
-windTurbine_6: {type: windTurbine, pose: {xyz: [-745.4, -196.5, 0], rpy: [0, 0, 0]}}
-windTurbine_7: {type: windTurbine, pose: {xyz: [-970.5, -187.5, 0], rpy: [0, 0, 0]}}
-windTurbine_8: {type: windTurbine, pose: {xyz: [-970.5, -99.6, 0], rpy: [0, 0, 0]}}
-windTurbine_9: {type: windTurbine, pose: {xyz: [-972, -14.6, 0], rpy: [0, 0, 0]}}
-windTurbine_10: {type: windTurbine, pose: {xyz: [-972, 74.8, 0], rpy: [0, 0, 0]}}
-windTurbine_11: {type: windTurbine, pose: {xyz: [-851.3, 74.8, 0], rpy: [0, 0, 0]}}
-windTurbine_12: {type: windTurbine, pose: {xyz: [-748.4, 73.3, 0], rpy: [0, 0, 0]}}
-base_13: {type: base, pose: {xyz: [-6.4, 0, 0], rpy: [0, 0, 0]}}
-base_14: {type: base, pose: {xyz: [-3.4, -27, 0], rpy: [0, 0, 0]}}
-px4_3: {type: drone, ns: px4_3, id: 2, pose: {xyz: [-6.4, 0, 0], rpy: [0, 0, 0]}}
-px4_2: {type: drone, ns: px4_2, id: 1, pose: {xyz: [-3.4, -27, 0], rpy: [0, 0, 0]}}
+origin: [37.41024770516164, -6.036976391450395, 100]
+building_tall_0: {type: building_tall, pose: {xyz: [-35.1, 34, 0], rpy: [0, 0, 3.141592653589793]}}
+building_tall_1: {type: building_tall, pose: {xyz: [-34.7, -50.1, 0], rpy: [0, 0, 0]}}
+building_short_2: {type: building_short, pose: {xyz: [-85.4, -9.6, 0], rpy: [0, 0, 1.5707963267948966]}}
+crane_3: {type: crane, pose: {xyz: [-34, -6.4, 0], rpy: [0, 0, 5.061454830783555]}}
+towerlight_4: {type: towerlight, pose: {xyz: [15.2, 48.9, 0], rpy: [0, 0, 0]}}
+towerlight_5: {type: towerlight, pose: {xyz: [51, 22.4, 0], rpy: [0, 0, 0]}}
+towerlight_6: {type: towerlight, pose: {xyz: [38.3, -25, 0], rpy: [0, 0, 0]}}
+towerlight_7: {type: towerlight, pose: {xyz: [5.3, -55.4, 0], rpy: [0, 0, 0]}}
+towerlight_8: {type: towerlight, pose: {xyz: [-35.9, -94.3, 0], rpy: [0, 0, 0]}}
+towerlight_9: {type: towerlight, pose: {xyz: [-87.8, -85.4, 0], rpy: [0, 0, 0]}}
+towerlight_10: {type: towerlight, pose: {xyz: [-119.5, -53.1, 0], rpy: [0, 0, 0]}}
+towerlight_11: {type: towerlight, pose: {xyz: [-109.2, -6.7, 0], rpy: [0, 0, 0]}}
+towerlight_12: {type: towerlight, pose: {xyz: [-94.2, 39.7, 0], rpy: [0, 0, 0]}}
+towerlight_13: {type: towerlight, pose: {xyz: [-42.8, 56.1, 0], rpy: [0, 0, 0]}}
+base_14: {type: base, pose: {xyz: [0.2, -7.1, 0], rpy: [0, 0, 0]}}
+base_15: {type: base, pose: {xyz: [0.3, -14.1, 0], rpy: [0, 0, 0]}}
+base_16: {type: base, pose: {xyz: [0, 0, 0], rpy: [0, 0, 0]}}
+px4_1: {type: drone, ns: uav_1, id: 0, pose: {xyz: [0.2, -7.1, 0], rpy: [0, 0, 0]}}
+px4_2: {type: drone, ns: uav_2, id: 1, pose: {xyz: [0.3, -14.1, 0], rpy: [0, 0, 0]}}
