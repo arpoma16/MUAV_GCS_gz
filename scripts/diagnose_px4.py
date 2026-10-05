@@ -10,8 +10,8 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPo
 from px4_msgs.msg import (
     VehicleStatus,
     VehicleControlMode,
-    EstimatorStatus,
-    SensorGps,
+    EstimatorStatusFlags,
+    VehicleGnss,
     VehicleLocalPosition,
     TimesyncStatus,
     FailsafeFlags
@@ -47,16 +47,19 @@ class PX4Diagnostics(Node):
             qos_profile
         )
 
+        # PX4 solo publica estimator_status_flags por DDS (estimator_status con los test
+        # ratios no esta en dds_topics.yaml), asi que el estimador se diagnostica con flags.
         self.create_subscription(
-            EstimatorStatus,
-            f'/{namespace}/fmu/out/estimator_status',
+            EstimatorStatusFlags,
+            f'/{namespace}/fmu/out/estimator_status_flags',
             self.estimator_status_callback,
             qos_profile
         )
 
+        # El receptor GNSS seleccionado viene anidado en VehicleGnss.receiver
         self.create_subscription(
-            SensorGps,
-            f'/{namespace}/fmu/out/vehicle_gps_position',
+            VehicleGnss,
+            f'/{namespace}/fmu/out/vehicle_gnss',
             self.gps_callback,
             qos_profile
         )
@@ -95,7 +98,7 @@ class PX4Diagnostics(Node):
         self.estimator_status = msg
 
     def gps_callback(self, msg):
-        self.gps_status = msg
+        self.gps_status = msg.receiver
 
     def local_position_callback(self, msg):
         self.local_position = msg
@@ -124,16 +127,15 @@ class PX4Diagnostics(Node):
 
         # Estimator Status
         if self.estimator_status:
+            es = self.estimator_status
             print(f"\n🧭 ESTIMATOR STATUS:")
-            print(f"   Position Horiz Valid: {bool(self.estimator_status.pos_horiz_accuracy < 1.0)}")
-            print(f"   Position Vert Valid: {bool(self.estimator_status.pos_vert_accuracy < 1.0)}")
-            print(f"   Yaw angle valid: {bool(self.estimator_status.heading_test_ratio < 1.0)}")
-            print(f"   Innovation test ratios:")
-            print(f"      - Heading: {self.estimator_status.heading_test_ratio:.3f}")
-            print(f"      - Velocity horiz: {self.estimator_status.vel_test_ratio:.3f}")
-            print(f"      - Velocity vert: {self.estimator_status.vel_test_ratio:.3f}")
+            print(f"   Tilt aligned: {es.cs_tilt_align}")
+            print(f"   Yaw aligned: {es.cs_yaw_align}")
+            print(f"   GNSS position fusion: {es.cs_gnss_pos}")
+            print(f"   Magnetometer fault: {es.cs_mag_fault}")
+            print(f"   Heading fusion error: {es.fs_bad_hdg}")
 
-            if self.estimator_status.heading_test_ratio > 1.0:
+            if self.has_yaw_estimate_error():
                 print(f"   ❌ YAW ESTIMATE ERROR DETECTED!")
         else:
             print("\n⚠️  ESTIMATOR STATUS: No data received")
@@ -209,7 +211,7 @@ class PX4Diagnostics(Node):
         """Print diagnostic recommendations based on observed issues"""
         issues = []
 
-        if self.estimator_status and self.estimator_status.heading_test_ratio > 1.0:
+        if self.has_yaw_estimate_error():
             issues.append("❌ YAW ESTIMATE ERROR - Magnetometer calibration or interference issue")
 
         if self.gps_status and self.gps_status.fix_type < 3:
@@ -230,30 +232,24 @@ class PX4Diagnostics(Node):
             for issue in issues:
                 print(f"   {issue}")
 
+    def has_yaw_estimate_error(self):
+        """Yaw not aligned, magnetometer declared faulty or heading fusion numerically broken."""
+        es = self.estimator_status
+        return bool(es and (not es.cs_yaw_align or es.cs_mag_fault or es.fs_bad_hdg))
+
+    @staticmethod
+    def _constants(prefix):
+        """{valor: nombre} a partir de las constantes <prefix>* de VehicleStatus.
+
+        Se leen del mensaje para que no queden desfasadas entre versiones de px4_msgs."""
+        return {getattr(VehicleStatus, n): n[len(prefix):]
+                for n in dir(VehicleStatus) if n.startswith(prefix)}
+
     def get_arming_state(self, state):
-        states = {
-            0: "INIT",
-            1: "STANDBY",
-            2: "ARMED",
-            3: "STANDBY_ERROR"
-        }
-        return states.get(state, f"UNKNOWN({state})")
+        return self._constants('ARMING_STATE_').get(state, f"UNKNOWN({state})")
 
     def get_nav_state(self, state):
-        states = {
-            0: "MANUAL",
-            1: "ALTCTL",
-            2: "POSCTL",
-            3: "AUTO_MISSION",
-            4: "AUTO_LOITER",
-            5: "AUTO_RTL",
-            14: "OFFBOARD",
-            17: "AUTO_TAKEOFF",
-            18: "AUTO_LAND",
-            19: "AUTO_FOLLOW_TARGET",
-            20: "AUTO_PRECLAND"
-        }
-        return states.get(state, f"UNKNOWN({state})")
+        return self._constants('NAVIGATION_STATE_').get(state, f"UNKNOWN({state})")
 
 
 def main(args=None):
