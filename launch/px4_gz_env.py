@@ -97,6 +97,12 @@ def px4_gz_env_actions():
     - GZ_SIM_RESOURCE_PATH     += <PX4>/Tools/simulation/gz/models
     - GZ_SIM_SYSTEM_PLUGIN_PATH += <PX4>/build/px4_sitl_default/src/modules/simulation/gz_plugins
     - GZ_SIM_SERVER_CONFIG_PATH = <PX4>/src/modules/simulation/gz_bridge/server.config
+    - GZ_IP                     = 127.0.0.1 (solo si el usuario no lo fijo)
+
+    GZ_IP fuerza el discovery de gz-transport por loopback. Sin esto gz elige una IP por su cuenta
+    y puede quedarse con la de un bridge de Docker en linkdown (172.x), con lo que PX4 pierde
+    suscripciones a los sensores (IMU/baro) al arrancar. Todo corre en la misma maquina; si gz y
+    PX4 estuvieran en maquinas distintas hay que exportar GZ_IP antes del launch.
 
     Las dos primeras se AGREGAN (append): ros_gz ya pone ahi /opt/ros/<distro>/share. La tercera
     solo se define si el usuario no la habia fijado. Lo que no exista se avisa y se omite.
@@ -108,6 +114,9 @@ def px4_gz_env_actions():
     server_config = os.path.join(px4_dir, 'src', 'modules', 'simulation', 'gz_bridge', 'server.config')
 
     actions = gz_gpu_env_actions()
+
+    if 'GZ_IP' not in os.environ:
+        actions.append(SetEnvironmentVariable('GZ_IP', '127.0.0.1'))
 
     def append_once(var, path):
         if path not in os.environ.get(var, '').split(os.pathsep):
