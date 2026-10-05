@@ -1,5 +1,6 @@
 
 import os
+import sys
 import tempfile
 import xml.etree.ElementTree as ET
 
@@ -23,6 +24,9 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 from ament_index_python.packages import get_package_share_directory
+
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+from px4_gz_env import px4_gz_env_actions
 
 
 def launch_setup(context, *args, **kwargs):
@@ -83,6 +87,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     return [
+        *px4_gz_env_actions(),
         gz,
         gz_sim_bridge,
         gzSERVICE_bridge_spawn,

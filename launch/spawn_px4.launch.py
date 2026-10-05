@@ -7,8 +7,12 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 import os
+import sys
 
 from ament_index_python.packages import get_package_share_directory
+
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+from px4_gz_env import find_px4
 
 
 def launch_setup(context, *args, **kwargs):
@@ -167,45 +171,6 @@ def launch_px4(context):
         return [spawn_process, px4_after_spawn]
 
     return [px4_process]
-
-def find_px4():
-    # Get PX4 directory path - try multiple methods
-    px4_dir = None
-
-    # Method 1: Check environment variable PX4_DIR
-    if 'PX4_DIR' in os.environ:
-        px4_dir = os.environ['PX4_DIR']
-
-    # Method 2: Try to find px4 executable in PATH and get its directory
-    if px4_dir is None:
-        import shutil
-        px4_bin = shutil.which('px4')
-        if px4_bin:
-            # px4 binary is typically at PX4-Autopilot/build/px4_sitl_default/bin/px4
-            # So we go up 4 levels to get the root directory
-            px4_dir = os.path.abspath(os.path.join(os.path.dirname(px4_bin), '../../../..'))
-
-    # Method 3: Check common PX4 installation locations
-    if px4_dir is None:
-        common_paths = [
-            os.path.expanduser('~/PX4-Autopilot'),
-            os.path.expanduser('~/px4'),
-            '/opt/PX4-Autopilot',
-            '/usr/local/PX4-Autopilot',
-            '/PX4-Autopilot',
-        ]
-        for path in common_paths:
-            if os.path.exists(os.path.join(path, 'build/px4_sitl_default/bin/px4')):
-                px4_dir = path
-                break
-
-    # Method 4: Fallback - use default
-    if px4_dir is None:
-        px4_dir = os.path.expanduser('~/PX4-Autopilot')
-        print(f"Warning: PX4 directory not found automatically. Using default: {px4_dir}")
-        print("Set PX4_DIR environment variable or ensure 'px4' is in PATH")
-
-    return px4_dir
 
 def generate_launch_description():
     declared_arguments = []
