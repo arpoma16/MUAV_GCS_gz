@@ -1,15 +1,18 @@
 """Helpers compartidos por los launch de muav_gcs_gz: descubrimiento de PX4 y entorno de Gazebo.
 
-Los modelos de PX4 (x500_base, x500_gimbal, gimbal, ...) y su server.config viven en
-<PX4>/Tools/simulation/gz. Los modelos de este paquete los referencian con model://, y
-los mundos dependen del server.config para tener sensores, asi que el servidor de Gazebo
-tiene que verlos en su entorno.
+Replica lo que PX4 genera en <build>/gz_env.sh (plantilla gz_bridge/gz_env.sh.in): los modelos
+de PX4 (x500_base, x500_gimbal, gimbal, ...) que este paquete referencia con model://, los
+plugins de gz compilados por PX4 (MotorFailurePlugin, OpticalFlowSystem, ...) y el server.config
+propio de PX4. Los mundos de este paquete no declaran plugins, asi que dependen de ese
+server.config para tener sensores, viento, etc. El servidor de Gazebo tiene que verlos.
 """
 
 import os
 import shutil
 
 from launch.actions import AppendEnvironmentVariable, SetEnvironmentVariable
+
+PX4_BUILD_TARGET = 'px4_sitl_default'
 
 
 def find_px4():
@@ -52,32 +55,45 @@ def find_px4():
 
 
 def px4_gz_env_actions():
-    """Acciones de launch que exponen los modelos y el server.config de PX4 a Gazebo.
+    """Acciones de launch que exponen a Gazebo los modelos, plugins y server.config de PX4.
 
-    Hay que ponerlas ANTES de la accion que arranca gz. La carpeta se toma de PX4_GZ_DIR
-    (si se quiere apuntar a otra copia de los modelos, p. ej. un clon de PX4-gazebo-models)
-    o, por defecto, de <PX4_DIR>/Tools/simulation/gz.
+    Hay que ponerlas ANTES de la accion que arranca gz. Todo se deriva de find_px4():
 
-    - GZ_SIM_RESOURCE_PATH se AGREGA (append): ros_gz ya pone ahi /opt/ros/<distro>/share.
-    - GZ_SIM_SERVER_CONFIG_PATH solo se define si el usuario no lo habia fijado.
+    - GZ_SIM_RESOURCE_PATH     += <PX4>/Tools/simulation/gz/models
+    - GZ_SIM_SYSTEM_PLUGIN_PATH += <PX4>/build/px4_sitl_default/src/modules/simulation/gz_plugins
+    - GZ_SIM_SERVER_CONFIG_PATH = <PX4>/src/modules/simulation/gz_bridge/server.config
+
+    Las dos primeras se AGREGAN (append): ros_gz ya pone ahi /opt/ros/<distro>/share. La tercera
+    solo se define si el usuario no la habia fijado. Lo que no exista se avisa y se omite.
     """
-    gz_dir = os.environ.get('PX4_GZ_DIR') or os.path.join(find_px4(), 'Tools', 'simulation', 'gz')
-    models_dir = os.path.join(gz_dir, 'models')
-    server_config = os.path.join(gz_dir, 'server.config')
-
-    if not os.path.isdir(models_dir):
-        print(f"[WARNING] PX4 Gazebo models not found at {models_dir}. "
-              "Set PX4_DIR (PX4 root) or PX4_GZ_DIR (folder with models/ and server.config).")
-        return []
+    px4_dir = find_px4()
+    models_dir = os.path.join(px4_dir, 'Tools', 'simulation', 'gz', 'models')
+    plugins_dir = os.path.join(
+        px4_dir, 'build', PX4_BUILD_TARGET, 'src', 'modules', 'simulation', 'gz_plugins')
+    server_config = os.path.join(px4_dir, 'src', 'modules', 'simulation', 'gz_bridge', 'server.config')
 
     actions = []
-    if models_dir not in os.environ.get('GZ_SIM_RESOURCE_PATH', '').split(os.pathsep):
-        actions.append(AppendEnvironmentVariable('GZ_SIM_RESOURCE_PATH', models_dir))
+
+    def append_once(var, path):
+        if path not in os.environ.get(var, '').split(os.pathsep):
+            actions.append(AppendEnvironmentVariable(var, path))
+
+    if os.path.isdir(models_dir):
+        append_once('GZ_SIM_RESOURCE_PATH', models_dir)
+    else:
+        print(f"[WARNING] PX4 Gazebo models not found at {models_dir}. Set PX4_DIR (PX4 root).")
+
+    if os.path.isdir(plugins_dir):
+        append_once('GZ_SIM_SYSTEM_PLUGIN_PATH', plugins_dir)
+    else:
+        print(f"[WARNING] PX4 Gazebo plugins not found at {plugins_dir}. "
+              f"Build PX4 first (make {PX4_BUILD_TARGET}).")
+
     if 'GZ_SIM_SERVER_CONFIG_PATH' not in os.environ:
         if os.path.isfile(server_config):
             actions.append(SetEnvironmentVariable('GZ_SIM_SERVER_CONFIG_PATH', server_config))
         else:
             print(f"[WARNING] PX4 server.config not found at {server_config}.")
 
-    print(f"[DEBUG] PX4 Gazebo assets from: {gz_dir}")
+    print(f"[DEBUG] PX4 Gazebo environment from: {px4_dir}")
     return actions
