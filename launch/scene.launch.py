@@ -158,7 +158,7 @@ def launch_setup(context, *args, **kwargs):
             )
 
             # Add delay to ensure Gazebo is ready (wait 5 seconds for first drone, then stagger additional drones)
-            delay_period = 25.0 + (len(drones_to_spawn) * 2.0)
+            delay_period = 25.0 + (len(drones_to_spawn) * 10.0)
             drones_to_spawn.append(
                 TimerAction(
                     period=delay_period,
