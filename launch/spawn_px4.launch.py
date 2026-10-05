@@ -117,6 +117,11 @@ def launch_px4(context):
         env_vars['PX4_SIM_SPEED_FACTOR'] = os.environ['speedfactor']
         print(f"[DEBUG] PX4_SIM_SPEED_FACTOR set to: {os.environ['speedfactor']}")
 
+    # By default PX4 locks the GUI camera onto every model it spawns (/gui/track FOLLOW in
+    # px4-rc.gzsim), which blocks navigating the world and fights between several drones.
+    # Disabled by default; export PX4_GZ_NO_FOLLOW= (empty) before the launch to re-enable it.
+    env_vars['PX4_GZ_NO_FOLLOW'] = os.environ.get('PX4_GZ_NO_FOLLOW', '1')
+
     # Add namespace if provided
     if namespace_val and namespace_val != '':
         env_vars['PX4_UXRCE_DDS_NS'] = namespace_val
