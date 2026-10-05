@@ -1,20 +1,13 @@
 
 import os
 import sys
-import tempfile
-import xml.etree.ElementTree as ET
-
-from jsonschema import ValidationError
 
 from launch import LaunchDescription
 
 from launch.actions import (
     DeclareLaunchArgument,
-    ExecuteProcess,
     IncludeLaunchDescription,
-    OpaqueFunction,
-    Shutdown,
-    TimerAction
+    OpaqueFunction
 )
 
 from launch.substitutions import LaunchConfiguration

@@ -2,23 +2,17 @@
 
 import os
 import tempfile
-import xml.etree.ElementTree as ET
 import yaml
-import math
 import sys
 import subprocess
 import re
-
-from jsonschema import ValidationError
 
 from launch import LaunchDescription
 
 from launch.actions import (
     DeclareLaunchArgument,
-    ExecuteProcess,
     IncludeLaunchDescription,
     OpaqueFunction,
-    Shutdown,
     TimerAction
 )
 
