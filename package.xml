@@ -18,6 +18,9 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
   <depend>rclcpp</depend>
+  <depend>muav_gcs_interfaces</depend>
+  <depend>gz_sim_vendor</depend>
+  <depend>gz_plugin_vendor</depend>
   <depend>gz_ros2_control</depend>
 
   <export>

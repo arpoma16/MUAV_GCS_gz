@@ -2,41 +2,41 @@
 <sdf version="1.9">
   <model name="x500_gimbal_collision">
 
-    <!-- Inherit the full x500_gimbal model (frame + motors + gimbal + plugins) -->
+    <!-- Inherit the full x500_gimbal model (frame + motors + gimbal + plugins).
+         The gimbal (cgo3_* links, camera_link) already comes from here. -->
     <include merge="true">
       <uri>model://x500_gimbal</uri>
     </include>
 
     <!-- ================================================================
-         FORWARD distance sensor (+X direction)
-         Mounted at the front of the drone, pointing forward.
+         FORWARD distance sensor (+X, in front of the frame plate)
     ================================================================ -->
     <link name="distance_sensor_forward_link">
-      <pose>0.12 0 0.0 0 0 0</pose>
+      <pose>0.19 0 0.24 0 0 0</pose>
       <inertial>
         <mass>0.001</mass>
         <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
       </inertial>
       <sensor name="distance_forward" type="gpu_lidar">
-        <!-- Sensor pointing in +X (no rotation needed, default) -->
         <pose>0 0 0 0 0 0</pose>
         <update_rate>10</update_rate>
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <topic>distance/forward</topic>
         <lidar>
           <scan>
+            <!-- 5x3 rays over +-15 deg: emulates the cone of a ToF/ultrasonic sensor.
+                 Keep the half-angle below ~20 deg or the rays hit the own propellers. -->
             <horizontal>
-              <samples>1</samples>
+              <samples>5</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.2618</min_angle>
+              <max_angle>0.2618</max_angle>
             </horizontal>
             <vertical>
-              <samples>1</samples>
+              <samples>3</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.1221</min_angle>
+              <max_angle>0.1221</max_angle>
             </vertical>
           </scan>
           <range>
@@ -58,11 +58,10 @@
     </joint>
 
     <!-- ================================================================
-         BACKWARD distance sensor (-X direction)
-         Mounted at the rear, pointing backward (rotated 180 deg in Z).
+         BACKWARD distance sensor (-X, behind the frame plate)
     ================================================================ -->
     <link name="distance_sensor_backward_link">
-      <pose>-0.12 0 0.0 0 0 3.14159</pose>
+      <pose>-0.19 0 0.24 0 0 3.14159</pose>
       <inertial>
         <mass>0.001</mass>
         <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
@@ -72,20 +71,21 @@
         <update_rate>10</update_rate>
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <topic>distance/backward</topic>
         <lidar>
           <scan>
+            <!-- 5x3 rays over +-15 deg: emulates the cone of a ToF/ultrasonic sensor.
+                 Keep the half-angle below ~20 deg or the rays hit the own propellers. -->
             <horizontal>
-              <samples>1</samples>
+              <samples>5</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.2618</min_angle>
+              <max_angle>0.2618</max_angle>
             </horizontal>
             <vertical>
-              <samples>1</samples>
+              <samples>3</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.1221</min_angle>
+              <max_angle>0.1221</max_angle>
             </vertical>
           </scan>
           <range>
@@ -107,11 +107,10 @@
     </joint>
 
     <!-- ================================================================
-         LEFT distance sensor (+Y direction)
-         Mounted on the left side, pointing left (rotated -90 deg in Z).
+         LEFT distance sensor (+Y, left of the frame plate)
     ================================================================ -->
     <link name="distance_sensor_left_link">
-      <pose>0 0.12 0.0 0 0 1.5708</pose>
+      <pose>0 0.19 0.24 0 0 1.5708</pose>
       <inertial>
         <mass>0.001</mass>
         <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
@@ -121,20 +120,21 @@
         <update_rate>10</update_rate>
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <topic>distance/left</topic>
         <lidar>
           <scan>
+            <!-- 5x3 rays over +-15 deg: emulates the cone of a ToF/ultrasonic sensor.
+                 Keep the half-angle below ~20 deg or the rays hit the own propellers. -->
             <horizontal>
-              <samples>1</samples>
+              <samples>5</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.2618</min_angle>
+              <max_angle>0.2618</max_angle>
             </horizontal>
             <vertical>
-              <samples>1</samples>
+              <samples>3</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.1221</min_angle>
+              <max_angle>0.1221</max_angle>
             </vertical>
           </scan>
           <range>
@@ -156,11 +156,10 @@
     </joint>
 
     <!-- ================================================================
-         RIGHT distance sensor (-Y direction)
-         Mounted on the right side, pointing right (rotated +90 deg in Z).
+         RIGHT distance sensor (-Y, right of the frame plate)
     ================================================================ -->
     <link name="distance_sensor_right_link">
-      <pose>0 -0.12 0.0 0 0 -1.5708</pose>
+      <pose>0 -0.19 0.24 0 0 -1.5708</pose>
       <inertial>
         <mass>0.001</mass>
         <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
@@ -170,20 +169,21 @@
         <update_rate>10</update_rate>
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <topic>distance/right</topic>
         <lidar>
           <scan>
+            <!-- 5x3 rays over +-15 deg: emulates the cone of a ToF/ultrasonic sensor.
+                 Keep the half-angle below ~20 deg or the rays hit the own propellers. -->
             <horizontal>
-              <samples>1</samples>
+              <samples>5</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.2618</min_angle>
+              <max_angle>0.2618</max_angle>
             </horizontal>
             <vertical>
-              <samples>1</samples>
+              <samples>3</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.1221</min_angle>
+              <max_angle>0.1221</max_angle>
             </vertical>
           </scan>
           <range>
@@ -205,11 +205,10 @@
     </joint>
 
     <!-- ================================================================
-         UP distance sensor (+Z direction)
-         Mounted on top of the frame, pointing upward (rotated -90 deg in Y).
+         UP distance sensor (+Z, above the top plate)
     ================================================================ -->
     <link name="distance_sensor_up_link">
-      <pose>0 0 0.08 0 -1.5708 0</pose>
+      <pose>0 0 0.32 0 -1.5708 0</pose>
       <inertial>
         <mass>0.001</mass>
         <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
@@ -219,20 +218,21 @@
         <update_rate>10</update_rate>
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <topic>distance/up</topic>
         <lidar>
           <scan>
+            <!-- 5x3 rays over +-15 deg: emulates the cone of a ToF/ultrasonic sensor.
+                 Keep the half-angle below ~20 deg or the rays hit the own propellers. -->
             <horizontal>
-              <samples>1</samples>
+              <samples>5</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.2618</min_angle>
+              <max_angle>0.2618</max_angle>
             </horizontal>
             <vertical>
-              <samples>1</samples>
+              <samples>3</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.1221</min_angle>
+              <max_angle>0.1221</max_angle>
             </vertical>
           </scan>
           <range>
@@ -254,12 +254,10 @@
     </joint>
 
     <!-- ================================================================
-         DOWN distance sensor (-Z direction)
-         Mounted on the bottom, pointing downward (rotated +90 deg in Y).
-         Useful also as altimeter.
+         DOWN distance sensor (-Z, below the plate, offset backwards to dodge the gimbal (also usable as altimeter))
     ================================================================ -->
     <link name="distance_sensor_down_link">
-      <pose>0 0 -0.05 0 1.5708 0</pose>
+      <pose>-0.12 0 0.2 0 1.5708 0</pose>
       <inertial>
         <mass>0.001</mass>
         <inertia><ixx>1e-6</ixx><iyy>1e-6</iyy><izz>1e-6</izz></inertia>
@@ -269,20 +267,21 @@
         <update_rate>10</update_rate>
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <topic>distance/down</topic>
         <lidar>
           <scan>
+            <!-- 5x3 rays over +-15 deg: emulates the cone of a ToF/ultrasonic sensor.
+                 Keep the half-angle below ~20 deg or the rays hit the own propellers. -->
             <horizontal>
-              <samples>1</samples>
+              <samples>5</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.2618</min_angle>
+              <max_angle>0.2618</max_angle>
             </horizontal>
             <vertical>
-              <samples>1</samples>
+              <samples>3</samples>
               <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
+              <min_angle>-0.1221</min_angle>
+              <max_angle>0.1221</max_angle>
             </vertical>
           </scan>
           <range>
@@ -302,6 +301,18 @@
       <parent>base_link</parent>
       <child>distance_sensor_down_link</child>
     </joint>
+
+    <!-- ================================================================
+         Closest obstacle per side -> ONE ROS message
+         (muav_gcs_interfaces/msg/ObstacleInfo on /<ros_namespace>/obstacle_info).
+         @NAMESPACE@ is replaced by spawn_px4.launch.py when the model is spawned.
+    ================================================================ -->
+    <plugin filename="obstacle_info_plugin" name="muav_gcs_gz::ObstacleInfoPlugin">
+      <ros_namespace>@NAMESPACE@</ros_namespace>
+      <topic>obstacle_info</topic>
+      <frame_id>@NAMESPACE@/base_link</frame_id>
+      <update_rate>10</update_rate>
+    </plugin>
 
   </model>
 </sdf>

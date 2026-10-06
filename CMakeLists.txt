@@ -15,6 +15,28 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+# Gazebo system plugin: closest obstacle per side -> one ROS message
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(muav_gcs_interfaces REQUIRED)
+find_package(gz_sim_vendor REQUIRED)
+find_package(gz-sim REQUIRED)
+find_package(gz_plugin_vendor REQUIRED)
+find_package(gz-plugin REQUIRED COMPONENTS register)
+
+add_library(obstacle_info_plugin SHARED src/obstacle_info_plugin.cpp)
+target_link_libraries(obstacle_info_plugin
+  gz-sim::gz-sim
+  gz-plugin::register
+)
+ament_target_dependencies(obstacle_info_plugin rclcpp muav_gcs_interfaces)
+
+# The plugin dir is added to GZ_SIM_SYSTEM_PLUGIN_PATH by hooks/
+install(TARGETS obstacle_info_plugin
+  LIBRARY DESTINATION lib/${PROJECT_NAME}
+)
+
 install(DIRECTORY
   launch
   models
