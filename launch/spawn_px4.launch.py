@@ -38,7 +38,7 @@ def launch_setup(context, *args, **kwargs):
             ns = namespace_val
 
         # Build topic names as strings (since we already performed the LaunchConfigurations)
-        gz_topic = f'/world/{world}/model/{vehicle}_{ID}/link/camera_link/sensor/imager/image'
+        gz_topic = f'/world/{world}/model/{vehicle}_{ID}/link/camera_link/sensor/camera/image'
         ros_topic = f'/{ns}/camera/image'
 
         # Using ros_gz_image for more efficient camera bridging
