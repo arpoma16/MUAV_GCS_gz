@@ -126,6 +126,10 @@ def launch_setup(context, *args, **kwargs):
     
     #  drone spawning
     drones_to_spawn = []
+    # Common `map` frame = ENU at the scene origin (same frame as the poses of the scene yaml)
+    map_origin = ''
+    if config_data.get('origin'):
+        map_origin = ','.join(str(v) for v in config_data['origin'])
     for entity_name, entity_data in config_data.items():
         # Skip non-dict entries (like 'origin' which is a list)
         if not isinstance(entity_data, dict):
@@ -146,13 +150,16 @@ def launch_setup(context, *args, **kwargs):
                     ("namespace", entity_data.get('ns', f'px4_{entity_data.get("id", 0)}')),
                     ("vehicle", entity_data.get('vehicle', 'x500_mono_cam')),
                     ("enable_camera", str(entity_data.get('enable_camera', 'true'))),
+                    ("enable_lidar", str(entity_data.get('enable_lidar', 'false'))),
+                    ("enable_tf", str(entity_data.get('enable_tf', 'true'))),
+                    ("map_origin", map_origin),
                     ("x", str(xyz[0])),
                     ("y", str(xyz[1])),
                     ("z", str(xyz[2])),
                     ("roll", str(rpy[0])),
                     ("pitch", str(rpy[1])),
                     ("yaw", str(rpy[2])),
-                    ("autostart", '4001'),
+                    ("autostart", str(entity_data.get('autostart', '4001'))),
                     ("gz_model_name", entity_data.get('gz_model_name', '')),
                 ]
             )

@@ -7,12 +7,59 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 import os
+import re
 import sys
+import tempfile
 
 from ament_index_python.packages import get_package_share_directory
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from px4_gz_env import find_px4
+
+
+# <include merge="true"><uri>model://X</uri></include> with nothing else inside
+_MERGE_INCLUDE_RE = re.compile(
+    r'<include\s+merge="true"\s*>\s*<uri>model://([^<\s]+)</uri>\s*</include>')
+
+
+def inline_package_models(content, models_dir):
+    """Inline the merge-includes of models that live in this package's models/ dir.
+
+    A model derived from another package model (e.g. x500_gimbal_collision_lidar includes
+    x500_gimbal_collision) would otherwise keep the included model's @NAMESPACE@ unfilled.
+    Includes of models outside the package (PX4's x500_gimbal, ...) are left untouched.
+    """
+    def repl(match):
+        path = os.path.join(models_dir, match.group(1), 'model.sdf')
+        if not os.path.isfile(path):
+            return match.group(0)
+        with open(path, 'r') as f:
+            inner = f.read()
+        body = re.search(r'<model\b[^>]*>(.*)</model>', inner, re.S)
+        if body is None:
+            return match.group(0)
+        return inline_package_models(body.group(1), models_dir)
+
+    return _MERGE_INCLUDE_RE.sub(repl, content)
+
+
+def fill_namespace(model_path, namespace):
+    """Replace @NAMESPACE@ in a model SDF (ROS namespace of the vehicle).
+
+    Returns the original path if nothing had to change, otherwise a temporary copy with the
+    package-model includes inlined and the namespace filled in (the plugins of the model
+    need it at load time).
+    """
+    with open(model_path, 'r') as f:
+        original = f.read()
+    content = inline_package_models(original, os.path.dirname(os.path.dirname(model_path)))
+    if content == original and '@NAMESPACE@' not in content:
+        return model_path
+    out_dir = tempfile.mkdtemp(prefix='muav_model_')
+    out_path = os.path.join(out_dir, 'model.sdf')
+    with open(out_path, 'w') as f:
+        f.write(content.replace('@NAMESPACE@', namespace))
+    return out_path
 
 
 def launch_setup(context, *args, **kwargs):
@@ -23,6 +70,10 @@ def launch_setup(context, *args, **kwargs):
     world = LaunchConfiguration('world').perform(context)
     namespace_val = LaunchConfiguration('namespace').perform(context)
     enable_camera_val = LaunchConfiguration('enable_camera').perform(context)
+    enable_lidar_val = LaunchConfiguration('enable_lidar').perform(context)
+    enable_tf_val = LaunchConfiguration('enable_tf').perform(context)
+    map_origin_val = LaunchConfiguration('map_origin').perform(context)
+    gz_model_name_val = LaunchConfiguration('gz_model_name').perform(context)
 
     # List to hold camera bridge actions
     camera_actions = []
@@ -69,9 +120,57 @@ def launch_setup(context, *args, **kwargs):
         # via image_transport. Compressed images are available at /{ns}/camera/image_raw/compressed
         # For H.264 compression, install: sudo apt install ros-humble-ffmpeg-image-transport
         
+    # 3D lidar point cloud (x500_gimbal_collision_lidar): the only lidar data bridged to ROS.
+    lidar_actions = []
+    if enable_lidar_val.lower() == 'true':
+        ns = namespace_val if namespace_val else f'px4_{ID}'
+        model_name = gz_model_name_val if gz_model_name_val else f'{vehicle}_{ID}'
+        gz_topic = f'/world/{world}/model/{model_name}/link/lidar_link/sensor/lidar/scan/points'
+        lidar_bridge = Node(
+            package='ros_gz_bridge',
+            executable='parameter_bridge',
+            name=f'lidar_bridge_{ID}',
+            arguments=[f'{gz_topic}@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked'],
+            remappings=[(gz_topic, f'/{ns}/lidar/points')],
+            output='screen',
+            parameters=[{'use_sim_time': True}]
+        )
+        lidar_actions.append(TimerAction(period=6.0, actions=[lidar_bridge]))
+
+        # Point cloud frame: the lidar SENSOR pose in base_link (see x500_gimbal_collision_lidar:
+        # lidar_link (0.14, 0, 0.44) + sensor offset 0.045, minus base_link z 0.24 in the model).
+        lidar_static_tf = Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name=f'lidar_static_tf_{ID}',
+            arguments=['--x', '0.185', '--y', '0', '--z', '0.20',
+                       '--frame-id', f'{ns}/base_link',
+                       '--child-frame-id', f'{ns}/lidar_link'],
+            output='screen'
+        )
+        lidar_actions.append(lidar_static_tf)
+
+    # TF <ns>/odom -> <ns>/base_link from the PX4 odometry (NED/FRD -> ENU/FLU).
+    tf_actions = []
+    if enable_tf_val.lower() == 'true':
+        ns = namespace_val if namespace_val else f'px4_{ID}'
+        tf_params = {'use_sim_time': True}
+        if map_origin_val:
+            # Common `map` frame: ENU anchored at lat,lon,alt (the scene origin)
+            lat, lon, alt = (float(v) for v in map_origin_val.split(','))
+            tf_params.update({'map_lat': lat, 'map_lon': lon, 'map_alt': alt})
+        tf_actions.append(Node(
+            package='muav_gcs_gz',
+            executable='odom_tf_broadcaster.py',
+            name=f'odom_tf_broadcaster_{ID}',
+            namespace=ns,
+            output='screen',
+            parameters=[tf_params]
+        ))
+
     return [
         px4_sitl_node,
-    ] + camera_actions
+    ] + camera_actions + lidar_actions + tf_actions
     
 def launch_px4(context):
     # Get PX4 directory path
@@ -88,6 +187,14 @@ def launch_px4(context):
     autostart_val = context.launch_configurations['autostart']
     namespace_val = context.launch_configurations['namespace']
     gz_model_name_val = context.launch_configurations['gz_model_name']
+    # Vehicles shipped in this package (models/<vehicle>) are not in PX4's model dir, so PX4
+    # cannot spawn them itself: we spawn them and PX4 attaches. Default name: {vehicle}_{ID},
+    # the same one PX4 would use and the camera bridge expects.
+    if not gz_model_name_val:
+        pkg_model = os.path.join(
+            get_package_share_directory('muav_gcs_gz'), 'models', vehicle_val, 'model.sdf')
+        if os.path.isfile(pkg_model):
+            gz_model_name_val = f'{vehicle_val}_{ID_val}'
     # Build pose string
     pose_str = f"{x_val},{y_val},{z_val},{roll_val},{pitch_val},{yaw_val}"
     # Build environment variables dictionary
@@ -151,6 +258,9 @@ def launch_px4(context):
             get_package_share_directory('muav_gcs_gz'), 'models',
             vehicle_val, 'model.sdf'
         )
+
+        model_path = fill_namespace(
+            model_path, namespace_val if namespace_val else f'px4_{ID_val}')
 
         spawn_process = ExecuteProcess(
             cmd=[
@@ -223,11 +333,21 @@ def generate_launch_description():
         DeclareLaunchArgument('gz_model_name',
             default_value='',
             description='Exact name of a model already spawned in Gazebo (PX4_GZ_MODEL_NAME). '
+                         'Optional: defaults to {vehicle}_{ID} for vehicles in this package\'s models/. '
                          'If set, PX4 attaches to it instead of spawning "vehicle" itself.')
         )
     # Camera bridge option
     declared_arguments.append(
         DeclareLaunchArgument('enable_camera', default_value='false', description='Enable camera bridge (only works with camera-equipped models)')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('enable_lidar', default_value='false', description='Bridge the 3D lidar point cloud to /{ns}/lidar/points (only x500_gimbal_collision_lidar)')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('enable_tf', default_value='true', description='Publish TF <ns>/odom -> <ns>/base_link from /<ns>/fmu/out/vehicle_odometry')
+        )
+    declared_arguments.append(
+        DeclareLaunchArgument('map_origin', default_value='', description='"lat,lon,alt" of the common `map` frame (ENU). If set, publishes map -> <ns>/odom from the PX4 EKF origin')
         )
     declared_arguments.append(
         DeclareLaunchArgument('world', default_value='default', description='Gazebo world name')
