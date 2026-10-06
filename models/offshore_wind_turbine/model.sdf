@@ -1,0 +1,420 @@
+<?xml version="1.0"?>
+<sdf version="1.9" xmlns:insem="https://example.org/insem">
+  <model name="offshore_wind_turbine">
+    <static>false</static>
+    <self_collide>false</self_collide>
+    <insem:asset id="FWT-01" class="floating_wind_turbine" name="Aerogenerador flotante offshore 8,4 MW"/>
+    <link name="platform">
+      <pose>0.00000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.0000 0.0000 0.0000 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>1666.7</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1666.7</iyy><iyz>0</iyz><izz>1666.7</izz></inertia>
+      </inertial>
+    </link>
+    <link name="column_0">
+      <pose>0.00000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.0000 0.0000 -4.7500 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>1076041.7</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1076041.7</iyy><iyz>0</iyz><izz>601666.7</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>0.00000 0.00000 -9.25000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.000</radius><length>21.500</length></cylinder></geometry></collision>
+      <collision name="c1"><pose>0.00000 0.00000 5.75000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.000</radius><length>8.500</length></cylinder></geometry></collision>
+      <collision name="c2"><pose>0.00000 0.00000 -19.50000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>9.500</radius><length>1.000</length></cylinder></geometry></collision>
+      <collision name="c3"><pose>0.00000 0.00000 10.25000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.400</radius><length>0.500</length></cylinder></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/column_0.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="column_1">
+      <pose>-51.96152 30.00000 0.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.0000 0.0000 -4.7500 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>1076041.7</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1076041.7</iyy><iyz>0</iyz><izz>601666.7</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>0.00000 0.00000 -9.25000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.000</radius><length>21.500</length></cylinder></geometry></collision>
+      <collision name="c1"><pose>0.00000 0.00000 5.75000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.000</radius><length>8.500</length></cylinder></geometry></collision>
+      <collision name="c2"><pose>0.00000 0.00000 -19.50000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>9.500</radius><length>1.000</length></cylinder></geometry></collision>
+      <collision name="c3"><pose>0.00000 0.00000 10.25000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.400</radius><length>0.500</length></cylinder></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/column_1.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="column_2">
+      <pose>-51.96152 -30.00000 0.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.0000 0.0000 -4.7500 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>1076041.7</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1076041.7</iyy><iyz>0</iyz><izz>601666.7</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>0.00000 0.00000 -9.25000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.000</radius><length>21.500</length></cylinder></geometry></collision>
+      <collision name="c1"><pose>0.00000 0.00000 5.75000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.000</radius><length>8.500</length></cylinder></geometry></collision>
+      <collision name="c2"><pose>0.00000 0.00000 -19.50000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>9.500</radius><length>1.000</length></cylinder></geometry></collision>
+      <collision name="c3"><pose>0.00000 0.00000 10.25000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>6.400</radius><length>0.500</length></cylinder></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/column_2.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="equipment_1">
+      <pose>-51.96152 30.00000 11.80000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.1500 0.6000 0.0000 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>16433.3</ixx><ixy>0</ixy><ixz>0</ixz><iyy>40841.7</iyy><iyz>0</iyz><izz>46008.3</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>-1.50000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose><geometry><box><size>3.200 2.400 2.600</size></box></geometry></collision>
+      <collision name="c1"><pose>1.80000 1.20000 0.00000 0.00000 -0.00000 0.00000</pose><geometry><box><size>3.200 2.400 2.600</size></box></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/equipment_1.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="equipment_2">
+      <pose>-51.96152 -30.00000 11.80000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.1500 0.6000 0.0000 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>16433.3</ixx><ixy>0</ixy><ixz>0</ixz><iyy>40841.7</iyy><iyz>0</iyz><izz>46008.3</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>-1.50000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose><geometry><box><size>3.200 2.400 2.600</size></box></geometry></collision>
+      <collision name="c1"><pose>1.80000 1.20000 0.00000 0.00000 -0.00000 0.00000</pose><geometry><box><size>3.200 2.400 2.600</size></box></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/equipment_2.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="arm_0_1">
+      <pose>0.00000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>-25.9808 15.0000 8.7525 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>581917.2</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1539100.5</iyy><iyz>0</iyz><izz>2105766.6</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>-25.98076 15.00000 8.54000 0.00000 -1.57080 0.00000</pose><geometry><capsule><radius>1.300</radius><length>48.000</length></capsule></geometry></collision>
+      <collision name="c1"><pose>-25.98076 15.00000 10.14000 0.00000 -1.57080 0.00000</pose><geometry><box><size>0.250 2.400 48.000</size></box></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/arm_0_1.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="arm_1_2">
+      <pose>0.00000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>-51.9615 0.0000 8.7525 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>1927625.5</ixx><ixy>0</ixy><ixz>0</ixz><iyy>13258.9</iyy><iyz>0</iyz><izz>1925633.3</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>-51.96152 0.00000 8.54000 0.00000 -1.57080 0.00000</pose><geometry><capsule><radius>1.300</radius><length>48.000</length></capsule></geometry></collision>
+      <collision name="c1"><pose>-51.96152 0.00000 10.14000 0.00000 -1.57080 0.00000</pose><geometry><box><size>0.250 2.400 48.000</size></box></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/arm_1_2.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="arm_2_0">
+      <pose>0.00000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>-25.9808 -15.0000 8.7525 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>581917.2</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1539100.5</iyy><iyz>0</iyz><izz>2105766.6</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>-25.98076 -15.00000 8.54000 0.00000 -1.57080 0.00000</pose><geometry><capsule><radius>1.300</radius><length>48.000</length></capsule></geometry></collision>
+      <collision name="c1"><pose>-25.98076 -15.00000 10.14000 0.00000 -1.57080 0.00000</pose><geometry><box><size>0.250 2.400 48.000</size></box></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/arm_2_0.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="jacket">
+      <pose>0.00000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>-26.4808 0.0000 -6.6219 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>3649574.8</ixx><ixy>0</ixy><ixz>0</ixz><iyy>2810472.2</iyy><iyz>0</iyz><izz>5873717.8</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>-25.98076 15.00000 -14.00000 0.00000 -1.57080 0.00000</pose><geometry><capsule><radius>2.000</radius><length>60.000</length></capsule></geometry></collision>
+      <collision name="c1"><pose>-51.96152 0.00000 -14.00000 0.00000 -1.57080 0.00000</pose><geometry><capsule><radius>2.000</radius><length>60.000</length></capsule></geometry></collision>
+      <collision name="c2"><pose>-25.98076 -15.00000 -14.00000 0.00000 -1.57080 0.00000</pose><geometry><capsule><radius>2.000</radius><length>60.000</length></capsule></geometry></collision>
+      <collision name="c3"><pose>-36.71948 21.20000 -6.00000 -0.00000 -0.99783 -0.52360</pose><geometry><capsule><radius>0.900</radius><length>29.513</length></capsule></geometry></collision>
+      <collision name="c4"><pose>-15.24205 8.80000 -6.00000 0.00000 -0.99783 2.61799</pose><geometry><capsule><radius>0.900</radius><length>29.513</length></capsule></geometry></collision>
+      <collision name="c5"><pose>-51.96152 -12.40000 -6.00000 0.00000 -0.99783 1.57080</pose><geometry><capsule><radius>0.900</radius><length>29.513</length></capsule></geometry></collision>
+      <collision name="c6"><pose>-51.96152 12.40000 -6.00000 0.00000 -0.99783 -1.57080</pose><geometry><capsule><radius>0.900</radius><length>29.513</length></capsule></geometry></collision>
+      <collision name="c7"><pose>-15.24205 -8.80000 -6.00000 0.00000 -0.99783 -2.61799</pose><geometry><capsule><radius>0.900</radius><length>29.513</length></capsule></geometry></collision>
+      <collision name="c8"><pose>-36.71948 -21.20000 -6.00000 0.00000 -0.99783 0.52360</pose><geometry><capsule><radius>0.900</radius><length>29.513</length></capsule></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/jacket.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="tower">
+      <pose>0.00000 0.00000 10.50000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.0000 0.0000 46.2500 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>7168741.7</ixx><ixy>0</ixy><ixz>0</ixz><iyy>7168741.7</iyy><iyz>0</iyz><izz>77066.7</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>0.00000 0.00000 1.25000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>3.400</radius><length>2.500</length></cylinder></geometry></collision>
+      <collision name="c1"><pose>0.00000 0.00000 47.50000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>2.800</radius><length>90.000</length></cylinder></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/tower.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="nacelle">
+      <pose>0.00000 0.00000 103.00000 0.00000 -0.00000 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>-3.5000 0.0000 2.2000 0 0 0</pose>
+        <mass>375000.0</mass>
+        <inertia><ixx>1890625.0</ixx><ixy>0</ixy><ixz>0</ixz><iyy>9976562.5</iyy><iyz>0</iyz><izz>9976562.5</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>-3.50000 0.00000 2.20000 0.00000 -0.00000 0.00000</pose><geometry><box><size>17.000 5.500 5.500</size></box></geometry></collision>
+      <collision name="c1"><pose>0.00000 0.00000 0.10000 0.00000 -0.00000 0.00000</pose><geometry><cylinder><radius>2.600</radius><length>1.200</length></cylinder></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/nacelle.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="hub">
+      <pose>7.00000 0.00000 105.00000 0.00000 -0.05236 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>1.0000 0.0000 0.0000 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>45066.7</ixx><ixy>0</ixy><ixz>0</ixz><iyy>45066.7</iyy><iyz>0</iyz><izz>45066.7</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>1.00000 0.00000 0.00000 0.00000 -0.00000 0.00000</pose><geometry><sphere><radius>2.600</radius></sphere></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/hub.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="blade_A">
+      <pose>6.90580 0.00000 106.79753 0.00000 -0.05236 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.0000 0.0000 40.1000 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>5385972.3</ixx><ixy>0</ixy><ixz>0</ixz><iyy>5373366.7</iyy><iyz>0</iyz><izz>39272.3</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>0.00000 0.00000 1.25313 0.00000 -0.00000 0.00000</pose><geometry><box><size>4.000 4.379 2.506</size></box></geometry></collision>
+      <collision name="c1"><pose>0.00000 0.00000 3.75938 0.00000 -0.00000 0.00000</pose><geometry><box><size>3.201 4.759 2.506</size></box></geometry></collision>
+      <collision name="c2"><pose>0.00000 0.00000 6.26562 0.00000 -0.00000 0.00000</pose><geometry><box><size>2.402 5.138 2.506</size></box></geometry></collision>
+      <collision name="c3"><pose>0.00000 0.00000 8.77188 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.854 5.518 2.506</size></box></geometry></collision>
+      <collision name="c4"><pose>0.00000 0.00000 11.27812 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.385 5.579 2.506</size></box></geometry></collision>
+      <collision name="c5"><pose>0.00000 0.00000 13.78438 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.115 5.579 2.506</size></box></geometry></collision>
+      <collision name="c6"><pose>0.00000 0.00000 16.29062 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.029 5.347 2.506</size></box></geometry></collision>
+      <collision name="c7"><pose>0.00000 0.00000 18.79688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.943 5.114 2.506</size></box></geometry></collision>
+      <collision name="c8"><pose>0.00000 0.00000 21.30313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.857 4.882 2.506</size></box></geometry></collision>
+      <collision name="c9"><pose>0.00000 0.00000 23.80938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.772 4.649 2.506</size></box></geometry></collision>
+      <collision name="c10"><pose>0.00000 0.00000 26.31563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.699 4.424 2.506</size></box></geometry></collision>
+      <collision name="c11"><pose>0.00000 0.00000 28.82188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.646 4.208 2.506</size></box></geometry></collision>
+      <collision name="c12"><pose>0.00000 0.00000 31.32813 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.593 3.992 2.506</size></box></geometry></collision>
+      <collision name="c13"><pose>0.00000 0.00000 33.83438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.539 3.777 2.506</size></box></geometry></collision>
+      <collision name="c14"><pose>0.00000 0.00000 36.34063 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.486 3.561 2.506</size></box></geometry></collision>
+      <collision name="c15"><pose>0.00000 0.00000 38.84687 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.433 3.346 2.506</size></box></geometry></collision>
+      <collision name="c16"><pose>0.00000 0.00000 41.35313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.380 3.130 2.506</size></box></geometry></collision>
+      <collision name="c17"><pose>0.00000 0.00000 43.85938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.357 2.946 2.506</size></box></geometry></collision>
+      <collision name="c18"><pose>0.00000 0.00000 46.36563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.333 2.761 2.506</size></box></geometry></collision>
+      <collision name="c19"><pose>0.00000 0.00000 48.87188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.310 2.577 2.506</size></box></geometry></collision>
+      <collision name="c20"><pose>0.00000 0.00000 51.37812 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.286 2.392 2.506</size></box></geometry></collision>
+      <collision name="c21"><pose>0.00000 0.00000 53.88438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.263 2.208 2.506</size></box></geometry></collision>
+      <collision name="c22"><pose>0.00000 0.00000 56.39062 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.239 2.024 2.506</size></box></geometry></collision>
+      <collision name="c23"><pose>0.00000 0.00000 58.89688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.220 1.863 2.506</size></box></geometry></collision>
+      <collision name="c24"><pose>0.00000 0.00000 61.40313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.202 1.717 2.506</size></box></geometry></collision>
+      <collision name="c25"><pose>0.00000 0.00000 63.90938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.185 1.572 2.506</size></box></geometry></collision>
+      <collision name="c26"><pose>0.00000 0.00000 66.41563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.168 1.427 2.506</size></box></geometry></collision>
+      <collision name="c27"><pose>0.00000 0.00000 68.92188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.151 1.282 2.506</size></box></geometry></collision>
+      <collision name="c28"><pose>0.00000 0.00000 71.42812 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.134 1.136 2.506</size></box></geometry></collision>
+      <collision name="c29"><pose>0.00000 0.00000 73.93438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.118 1.003 2.506</size></box></geometry></collision>
+      <collision name="c30"><pose>0.00000 0.00000 76.44063 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.109 0.919 2.506</size></box></geometry></collision>
+      <collision name="c31"><pose>0.00000 0.00000 78.94688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.099 0.834 2.506</size></box></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/blade_A.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="blade_B">
+      <pose>7.04710 -1.55885 104.10123 2.09440 -0.05236 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.0000 0.0000 40.1000 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>5385972.3</ixx><ixy>0</ixy><ixz>0</ixz><iyy>5373366.7</iyy><iyz>0</iyz><izz>39272.3</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>0.00000 0.00000 1.25313 0.00000 -0.00000 0.00000</pose><geometry><box><size>4.000 4.379 2.506</size></box></geometry></collision>
+      <collision name="c1"><pose>0.00000 0.00000 3.75938 0.00000 -0.00000 0.00000</pose><geometry><box><size>3.201 4.759 2.506</size></box></geometry></collision>
+      <collision name="c2"><pose>0.00000 0.00000 6.26562 0.00000 -0.00000 0.00000</pose><geometry><box><size>2.402 5.138 2.506</size></box></geometry></collision>
+      <collision name="c3"><pose>0.00000 0.00000 8.77188 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.854 5.518 2.506</size></box></geometry></collision>
+      <collision name="c4"><pose>0.00000 0.00000 11.27812 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.385 5.579 2.506</size></box></geometry></collision>
+      <collision name="c5"><pose>0.00000 0.00000 13.78438 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.115 5.579 2.506</size></box></geometry></collision>
+      <collision name="c6"><pose>0.00000 0.00000 16.29062 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.029 5.347 2.506</size></box></geometry></collision>
+      <collision name="c7"><pose>0.00000 0.00000 18.79688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.943 5.114 2.506</size></box></geometry></collision>
+      <collision name="c8"><pose>0.00000 0.00000 21.30313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.857 4.882 2.506</size></box></geometry></collision>
+      <collision name="c9"><pose>0.00000 0.00000 23.80938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.772 4.649 2.506</size></box></geometry></collision>
+      <collision name="c10"><pose>0.00000 0.00000 26.31563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.699 4.424 2.506</size></box></geometry></collision>
+      <collision name="c11"><pose>0.00000 0.00000 28.82188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.646 4.208 2.506</size></box></geometry></collision>
+      <collision name="c12"><pose>0.00000 0.00000 31.32813 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.593 3.992 2.506</size></box></geometry></collision>
+      <collision name="c13"><pose>0.00000 0.00000 33.83438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.539 3.777 2.506</size></box></geometry></collision>
+      <collision name="c14"><pose>0.00000 0.00000 36.34063 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.486 3.561 2.506</size></box></geometry></collision>
+      <collision name="c15"><pose>0.00000 0.00000 38.84687 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.433 3.346 2.506</size></box></geometry></collision>
+      <collision name="c16"><pose>0.00000 0.00000 41.35313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.380 3.130 2.506</size></box></geometry></collision>
+      <collision name="c17"><pose>0.00000 0.00000 43.85938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.357 2.946 2.506</size></box></geometry></collision>
+      <collision name="c18"><pose>0.00000 0.00000 46.36563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.333 2.761 2.506</size></box></geometry></collision>
+      <collision name="c19"><pose>0.00000 0.00000 48.87188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.310 2.577 2.506</size></box></geometry></collision>
+      <collision name="c20"><pose>0.00000 0.00000 51.37812 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.286 2.392 2.506</size></box></geometry></collision>
+      <collision name="c21"><pose>0.00000 0.00000 53.88438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.263 2.208 2.506</size></box></geometry></collision>
+      <collision name="c22"><pose>0.00000 0.00000 56.39062 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.239 2.024 2.506</size></box></geometry></collision>
+      <collision name="c23"><pose>0.00000 0.00000 58.89688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.220 1.863 2.506</size></box></geometry></collision>
+      <collision name="c24"><pose>0.00000 0.00000 61.40313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.202 1.717 2.506</size></box></geometry></collision>
+      <collision name="c25"><pose>0.00000 0.00000 63.90938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.185 1.572 2.506</size></box></geometry></collision>
+      <collision name="c26"><pose>0.00000 0.00000 66.41563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.168 1.427 2.506</size></box></geometry></collision>
+      <collision name="c27"><pose>0.00000 0.00000 68.92188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.151 1.282 2.506</size></box></geometry></collision>
+      <collision name="c28"><pose>0.00000 0.00000 71.42812 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.134 1.136 2.506</size></box></geometry></collision>
+      <collision name="c29"><pose>0.00000 0.00000 73.93438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.118 1.003 2.506</size></box></geometry></collision>
+      <collision name="c30"><pose>0.00000 0.00000 76.44063 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.109 0.919 2.506</size></box></geometry></collision>
+      <collision name="c31"><pose>0.00000 0.00000 78.94688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.099 0.834 2.506</size></box></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/blade_B.obj</uri></mesh></geometry></visual>
+    </link>
+    <link name="blade_C">
+      <pose>7.04710 1.55885 104.10123 -2.09440 -0.05236 0.00000</pose>
+      <gravity>false</gravity>
+      <inertial>
+        <pose>0.0000 0.0000 40.1000 0 0 0</pose>
+        <mass>10000.0</mass>
+        <inertia><ixx>5385972.3</ixx><ixy>0</ixy><ixz>0</ixz><iyy>5373366.7</iyy><iyz>0</iyz><izz>39272.3</izz></inertia>
+      </inertial>
+      <collision name="c0"><pose>0.00000 0.00000 1.25313 0.00000 -0.00000 0.00000</pose><geometry><box><size>4.000 4.379 2.506</size></box></geometry></collision>
+      <collision name="c1"><pose>0.00000 0.00000 3.75938 0.00000 -0.00000 0.00000</pose><geometry><box><size>3.201 4.759 2.506</size></box></geometry></collision>
+      <collision name="c2"><pose>0.00000 0.00000 6.26562 0.00000 -0.00000 0.00000</pose><geometry><box><size>2.402 5.138 2.506</size></box></geometry></collision>
+      <collision name="c3"><pose>0.00000 0.00000 8.77188 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.854 5.518 2.506</size></box></geometry></collision>
+      <collision name="c4"><pose>0.00000 0.00000 11.27812 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.385 5.579 2.506</size></box></geometry></collision>
+      <collision name="c5"><pose>0.00000 0.00000 13.78438 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.115 5.579 2.506</size></box></geometry></collision>
+      <collision name="c6"><pose>0.00000 0.00000 16.29062 0.00000 -0.00000 0.00000</pose><geometry><box><size>1.029 5.347 2.506</size></box></geometry></collision>
+      <collision name="c7"><pose>0.00000 0.00000 18.79688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.943 5.114 2.506</size></box></geometry></collision>
+      <collision name="c8"><pose>0.00000 0.00000 21.30313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.857 4.882 2.506</size></box></geometry></collision>
+      <collision name="c9"><pose>0.00000 0.00000 23.80938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.772 4.649 2.506</size></box></geometry></collision>
+      <collision name="c10"><pose>0.00000 0.00000 26.31563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.699 4.424 2.506</size></box></geometry></collision>
+      <collision name="c11"><pose>0.00000 0.00000 28.82188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.646 4.208 2.506</size></box></geometry></collision>
+      <collision name="c12"><pose>0.00000 0.00000 31.32813 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.593 3.992 2.506</size></box></geometry></collision>
+      <collision name="c13"><pose>0.00000 0.00000 33.83438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.539 3.777 2.506</size></box></geometry></collision>
+      <collision name="c14"><pose>0.00000 0.00000 36.34063 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.486 3.561 2.506</size></box></geometry></collision>
+      <collision name="c15"><pose>0.00000 0.00000 38.84687 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.433 3.346 2.506</size></box></geometry></collision>
+      <collision name="c16"><pose>0.00000 0.00000 41.35313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.380 3.130 2.506</size></box></geometry></collision>
+      <collision name="c17"><pose>0.00000 0.00000 43.85938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.357 2.946 2.506</size></box></geometry></collision>
+      <collision name="c18"><pose>0.00000 0.00000 46.36563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.333 2.761 2.506</size></box></geometry></collision>
+      <collision name="c19"><pose>0.00000 0.00000 48.87188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.310 2.577 2.506</size></box></geometry></collision>
+      <collision name="c20"><pose>0.00000 0.00000 51.37812 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.286 2.392 2.506</size></box></geometry></collision>
+      <collision name="c21"><pose>0.00000 0.00000 53.88438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.263 2.208 2.506</size></box></geometry></collision>
+      <collision name="c22"><pose>0.00000 0.00000 56.39062 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.239 2.024 2.506</size></box></geometry></collision>
+      <collision name="c23"><pose>0.00000 0.00000 58.89688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.220 1.863 2.506</size></box></geometry></collision>
+      <collision name="c24"><pose>0.00000 0.00000 61.40313 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.202 1.717 2.506</size></box></geometry></collision>
+      <collision name="c25"><pose>0.00000 0.00000 63.90938 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.185 1.572 2.506</size></box></geometry></collision>
+      <collision name="c26"><pose>0.00000 0.00000 66.41563 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.168 1.427 2.506</size></box></geometry></collision>
+      <collision name="c27"><pose>0.00000 0.00000 68.92188 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.151 1.282 2.506</size></box></geometry></collision>
+      <collision name="c28"><pose>0.00000 0.00000 71.42812 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.134 1.136 2.506</size></box></geometry></collision>
+      <collision name="c29"><pose>0.00000 0.00000 73.93438 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.118 1.003 2.506</size></box></geometry></collision>
+      <collision name="c30"><pose>0.00000 0.00000 76.44063 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.109 0.919 2.506</size></box></geometry></collision>
+      <collision name="c31"><pose>0.00000 0.00000 78.94688 0.00000 -0.00000 0.00000</pose><geometry><box><size>0.099 0.834 2.506</size></box></geometry></collision>
+      <visual name="mesh"><geometry><mesh><uri>meshes/blade_C.obj</uri></mesh></geometry></visual>
+    </link>
+    <joint name="world_anchor" type="fixed">
+      <parent>world</parent>
+      <child>platform</child>
+    </joint>
+    <joint name="column_0_joint" type="fixed">
+      <parent>platform</parent>
+      <child>column_0</child>
+    </joint>
+    <joint name="column_1_joint" type="fixed">
+      <parent>platform</parent>
+      <child>column_1</child>
+    </joint>
+    <joint name="column_2_joint" type="fixed">
+      <parent>platform</parent>
+      <child>column_2</child>
+    </joint>
+    <joint name="equipment_1_joint" type="fixed">
+      <parent>column_1</parent>
+      <child>equipment_1</child>
+    </joint>
+    <joint name="equipment_2_joint" type="fixed">
+      <parent>column_2</parent>
+      <child>equipment_2</child>
+    </joint>
+    <joint name="arm_0_1_joint" type="fixed">
+      <parent>platform</parent>
+      <child>arm_0_1</child>
+    </joint>
+    <joint name="arm_1_2_joint" type="fixed">
+      <parent>platform</parent>
+      <child>arm_1_2</child>
+    </joint>
+    <joint name="arm_2_0_joint" type="fixed">
+      <parent>platform</parent>
+      <child>arm_2_0</child>
+    </joint>
+    <joint name="jacket_joint" type="fixed">
+      <parent>platform</parent>
+      <child>jacket</child>
+    </joint>
+    <joint name="tower_joint" type="fixed">
+      <parent>column_0</parent>
+      <child>tower</child>
+    </joint>
+    <joint name="nacelle_joint" type="revolute">
+      <parent>tower</parent>
+      <child>nacelle</child>
+      <axis>
+        <xyz>0.000000 0.000000 1.000000</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper><effort>1e+12</effort><velocity>1e+06</velocity></limit>
+      </axis>
+    </joint>
+    <joint name="hub_joint" type="revolute">
+      <parent>nacelle</parent>
+      <child>hub</child>
+      <axis>
+        <xyz>1.000000 0.000000 0.000000</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper><effort>1e+12</effort><velocity>1e+06</velocity></limit>
+      </axis>
+    </joint>
+    <joint name="blade_A_joint" type="revolute">
+      <parent>hub</parent>
+      <child>blade_A</child>
+      <axis>
+        <xyz>0.000000 0.000000 1.000000</xyz>
+        <limit><lower>-0.0872665</lower><upper>1.65806</upper><effort>1e+12</effort><velocity>1e+06</velocity></limit>
+      </axis>
+    </joint>
+    <joint name="blade_B_joint" type="revolute">
+      <parent>hub</parent>
+      <child>blade_B</child>
+      <axis>
+        <xyz>0.000000 0.000000 1.000000</xyz>
+        <limit><lower>-0.0872665</lower><upper>1.65806</upper><effort>1e+12</effort><velocity>1e+06</velocity></limit>
+      </axis>
+    </joint>
+    <joint name="blade_C_joint" type="revolute">
+      <parent>hub</parent>
+      <child>blade_C</child>
+      <axis>
+        <xyz>0.000000 0.000000 1.000000</xyz>
+        <limit><lower>-0.0872665</lower><upper>1.65806</upper><effort>1e+12</effort><velocity>1e+06</velocity></limit>
+      </axis>
+    </joint>
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>nacelle_joint</joint_name>
+      <topic>/fwt01/nacelle_yaw/cmd_pos</topic>
+      <p_gain>1.0e8</p_gain>
+      <d_gain>1.5e8</d_gain>
+      <cmd_max>1.0e10</cmd_max>
+      <cmd_min>-1.0e10</cmd_min>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>hub_joint</joint_name>
+      <topic>/fwt01/rotor/cmd_vel</topic>
+    </plugin>
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>blade_A_joint</joint_name>
+      <topic>/fwt01/blade_A_pitch/cmd_pos</topic>
+      <p_gain>3.0e6</p_gain>
+      <d_gain>2.0e6</d_gain>
+      <cmd_max>1.0e9</cmd_max>
+      <cmd_min>-1.0e9</cmd_min>
+    </plugin>
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>blade_B_joint</joint_name>
+      <topic>/fwt01/blade_B_pitch/cmd_pos</topic>
+      <p_gain>3.0e6</p_gain>
+      <d_gain>2.0e6</d_gain>
+      <cmd_max>1.0e9</cmd_max>
+      <cmd_min>-1.0e9</cmd_min>
+    </plugin>
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>blade_C_joint</joint_name>
+      <topic>/fwt01/blade_C_pitch/cmd_pos</topic>
+      <p_gain>3.0e6</p_gain>
+      <d_gain>2.0e6</d_gain>
+      <cmd_max>1.0e9</cmd_max>
+      <cmd_min>-1.0e9</cmd_min>
+    </plugin>
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher"/>
+  </model>
+</sdf>
