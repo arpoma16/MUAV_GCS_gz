@@ -70,6 +70,83 @@ El target de build está fijo en `px4_sitl_default` (`PX4_BUILD_TARGET` en el he
 - Los **mundos** de este paquete (`world/*.sdf`) no declaran `<plugin>`; `psdk_gz/worlds/hitl_default.sdf`
   sí (por eso el HITL no depende del `server.config`).
 
+## Obstáculos: `x500_gimbal_collision` y `ObstacleInfo`
+
+`x500_gimbal_collision` = `x500_gimbal` (el gimbal ya viene incluido: links `cgo3_*`, `camera_link`) + 6 sensores
+de distancia (forward, backward, left, right, up, down) + el plugin `obstacle_info_plugin`.
+
+- Cada sensor es un `gpu_lidar` de **5×5 rayos sobre ±15°** (emula el cono de un ToF). Mantener el
+  semiángulo por debajo de ~20°: más allá los rayos ven las hélices del propio dron.
+- Las poses de los links son relativas al **modelo**, no a `base_link` (que está a z=0.24): los sensores
+  van fuera de la placa del frame y `down` está desplazado a x=-0.12 para esquivar el gimbal.
+- Los lidars **no se puentean a ROS**. El plugin (`src/obstacle_info_plugin.cpp`) los lee por gz-transport,
+  toma el mínimo de cada cono y publica **un solo** `muav_gcs_interfaces/msg/ObstacleInfo` en
+  `/<ns>/obstacle_info` (10 Hz, `header.stamp` = tiempo de simulación).
+- **QoS: `SensorDataQoS` (best effort).** El suscriptor (p. ej. el nodo de offboard) debe usar
+  `qos_profile_sensor_data` / `rclcpp::SensorDataQoS()`; con el QoS por defecto (reliable) no llega nada.
+- Sin obstáculo: `detected=false`, `distance=inf`. Más cerca del mínimo del sensor (5 cm): `detected=true`,
+  `distance=0.05`.
+- `@NAMESPACE@` en el SDF lo sustituye `spawn_px4.launch.py` (copia temporal) con el `ns` del YAML.
+- La ruta del plugin (`GZ_SIM_SYSTEM_PLUGIN_PATH`) la pone el hook de `hooks/`, no el launch: hace falta
+  `colcon build` y `source install/setup.*`.
+- PX4 **no** consume estos sensores (su `gz_bridge` solo se suscribe a un lidar con otro nombre de link).
+
+### `x500_gimbal_collision_lidar`: + lidar 3D frontal
+
+Hereda todo `x500_gimbal_collision` (`<include merge="true">`) y suma un `gpu_lidar` sobre un mástil encima de
+la placa del frame (por encima del plano de las hélices, para que los rayos no las vean): 360×16 rayos,
+120° × 30°, 0.2–50 m, 10 Hz. Pensado para detectar/seguir objetos a partir de la nube de puntos.
+
+- ROS: `enable_lidar: true` en el YAML del dron → `/<ns>/lidar/points` (`sensor_msgs/PointCloud2`, organizada
+  360×16, `frame_id: lidar_link`). Es el único dato del lidar que se puentea; usar `qos_profile_sensor_data`.
+- TF: ver la sección siguiente. La nube va en el frame del **sensor** (`<ns>/lidar_link`).
+- Como el modelo hereda uno del paquete, `spawn_px4.launch.py` aplana los `<include merge="true">` de modelos
+  del propio paquete en la copia temporal (si no, el `@NAMESPACE@` del plugin heredado quedaría sin sustituir).
+  Los includes de modelos de PX4 (`x500_gimbal`) no se tocan.
+- Los 6 sensores de distancia y `ObstacleInfo` siguen funcionando igual (el mástil queda fuera de sus conos).
+
+## TF de los drones
+
+Frames con prefijo de namespace (`uav_1/...`) para que varios drones compartan `/tf`:
+
+| Frame | Quién lo publica |
+|---|---|
+| `<ns>/odom` → `<ns>/base_link` | `scripts/odom_tf_broadcaster.py` (nodo por dron, `enable_tf`, por defecto `true`) |
+| `<ns>/base_link` → `<ns>/lidar_link` | `static_transform_publisher` (solo con `enable_lidar: true`): (0.185, 0, 0.20) |
+
+- El TF dinámico sale de `/<ns>/fmu/out/vehicle_odometry` (PX4, NED/FRD) convertido a ENU/FLU (REP-103);
+  admite `pose_frame` NED y FRD y descarta mensajes con NaN. El `stamp` es tiempo de simulación (`use_sim_time`).
+- `odom` es **por dron**: el origen de la odometría de PX4 es la posición del dron al arrancar. No hay un
+  frame `map` común; para relacionar drones hace falta el origen GPS o la pose de spawn.
+- Los `frame_id` de `ObstacleInfo` (`<ns>/base_link`) y de la nube (`<ns>/lidar_link`) salen del SDF con el
+  `@NAMESPACE@` sustituido por el launch.
+- El (0.185, 0, 0.20) del TF estático está duplicado en el SDF del lidar y en `spawn_px4.launch.py`: si se
+  mueve el sensor hay que cambiar los dos.
+- La cámara del gimbal no tiene TF (se mueve con el gimbal).
+
+### Frame `map` común
+
+`map` = ENU anclado en el `origin` (lat, lon, alt) del YAML de la escena = el frame del mundo de Gazebo, o sea
+el mismo en el que están las poses (`xyz`) del YAML (`world_frame_orientation: ENU`, sin `heading_deg`).
+`scene.launch.py` pasa ese `origin` a cada dron (`map_origin`) y el nodo publica un **TF estático**
+`map → <ns>/odom`:
+
+- Sale del origen del EKF de cada PX4 (`ref_lat/ref_lon/ref_alt` de `vehicle_local_position`) convertido de
+  WGS84 a ENU respecto del `origin`. Se vuelve a publicar si PX4 cambia su origen. Es estático y latcheado, así
+  que un suscriptor tardío lo recibe.
+- Rotación = identidad: la odometría ya está en ENU alineado al norte (`pose_frame` NED). Con `pose_frame` FRD
+  (rumbo arbitrario) **no** se aplica el desfase de rumbo y el nodo avisa con un warning. Sin `origin` en el
+  YAML, o con `map_origin` vacío, no se publica `map`.
+- **Topic versionado:** esta compilación de PX4 publica la posición local en
+  `/<ns>/fmu/out/vehicle_local_position_v1` (el sin versión no tiene publicadores). El nodo deriva el sufijo de
+  `VehicleLocalPosition.MESSAGE_VERSION`. Ojo con los nodos propios que se suscriban a ese topic.
+- **Validado** con 2 PX4 SITL reales (uno `x500_gimbal_collision_lidar`, otro `x500` con yaw de spawn 90°):
+  `map → base_link` vs. la pose real de Gazebo, diferencia ≤ 1.4 cm. El yaw de spawn no entra en `map → odom`.
+- La altura de `odom` respecto de `map` **no** es una constante: depende de cómo está asentado el dron cuando el
+  EKF fija su origen (0.16 y 0.23 m en la prueba), por eso se calcula en vez de usar el spawn.
+- Precisión: en simulación el GPS no tiene error apreciable; con drones reales el error del GPS (metros) se
+  traduce en un desfase entre drones (RTK lo baja a centímetros).
+
 ## `server.config`: hay dos y difieren
 
 PX4 usa `src/modules/simulation/gz_bridge/server.config`, **no** `Tools/simulation/gz/server.config`.
