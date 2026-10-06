@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <model name="x500_gimbal_collision_lidar">
+
+    <!-- Everything from x500_gimbal_collision: x500 + gimbal + 6 distance sensors
+         + obstacle_info plugin. -->
+    <include merge="true">
+      <uri>model://x500_gimbal_collision</uri>
+    </include>
+
+    <!-- ================================================================
+         FORWARD 3D LIDAR (+X), point cloud for object detection/tracking.
+         Sits on a mast above the frame plate (top of plate z=0.29, propeller plane z=0.30)
+         so the beams clear the propellers; ahead of the up distance sensor cone.
+         Pose is relative to the model (base_link is at z=0.24). The point cloud is expressed in
+         the SENSOR frame (link + 0.045 in x); TF base_link -> <ns>/lidar_link is published by
+         spawn_px4.launch.py with (0.185, 0, 0.20): keep both in sync.
+         FOV: 120 deg horizontal x 30 deg vertical, 360 x 16 rays, 10 Hz, 0.2-50 m.
+    ================================================================ -->
+    <link name="lidar_link">
+      <pose>0.14 0 0.44 0 0 0</pose>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>9.3e-5</ixx><iyy>9.3e-5</iyy><izz>8e-5</izz>
+        </inertia>
+      </inertial>
+      <visual name="lidar_body_visual">
+        <geometry><cylinder><radius>0.04</radius><length>0.08</length></cylinder></geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <visual name="lidar_mast_visual">
+        <pose>0 0 -0.095 0 0 0</pose>
+        <geometry><cylinder><radius>0.01</radius><length>0.11</length></cylinder></geometry>
+        <material>
+          <ambient>0.175 0.175 0.175 1</ambient>
+          <diffuse>0.175 0.175 0.175 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Sensor window on the front face of the body: the rays start outside the own visual. -->
+      <sensor name="lidar" type="gpu_lidar">
+        <pose>0.045 0 0 0 0 0</pose>
+        <gz_frame_id>@NAMESPACE@/lidar_link</gz_frame_id>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>-1.0472</min_angle>
+              <max_angle>1.0472</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>16</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.2618</min_angle>
+              <max_angle>0.2618</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.2</min>
+            <max>50.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </link>
+    <joint name="lidar_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>lidar_link</child>
+    </joint>
+
+  </model>
+</sdf>
