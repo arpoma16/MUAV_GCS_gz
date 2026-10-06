@@ -48,6 +48,7 @@ install(DIRECTORY
 install(PROGRAMS
   scripts/startup_spawner.py
   scripts/diagnose_px4.py
+  scripts/odom_tf_broadcaster.py
   scripts/calculate_magnetic_field.py
   DESTINATION lib/${PROJECT_NAME}
 )
