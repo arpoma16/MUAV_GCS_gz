@@ -38,6 +38,7 @@ def launch_setup(context, *args, **kwargs):
     headless = LaunchConfiguration("headless").perform(context)
     autostart = LaunchConfiguration("autostart").perform(context)
     user_config = LaunchConfiguration("user_config").perform(context)
+    world_template = LaunchConfiguration("world_template").perform(context)
     world_file = os.path.join(get_package_share_directory('muav_gcs_gz'), 'world', 'plazaAgua.sdf')
     
 
@@ -53,7 +54,7 @@ def launch_setup(context, *args, **kwargs):
         lat = config_data['origin'][0]
         lon = config_data['origin'][1]
         alt = config_data['origin'][2]
-        build_world_file_template = os.path.join(get_package_share_directory('muav_gcs_gz'), 'world', 'template.sdf')
+        build_world_file_template = os.path.join(get_package_share_directory('muav_gcs_gz'), 'world', world_template)
         world_file = build_world_file(build_world_file_template, lat, lon, alt)
 
     
@@ -268,5 +269,8 @@ def generate_launch_description():
                               description="Start Gazebo automatically. Options: [true, false]"),
         DeclareLaunchArgument("user_config", default_value="",
                               description="Path to a user config"),
+        DeclareLaunchArgument("world_template", default_value="template.sdf",
+                              description="World template under world/ used when the config has an origin "
+                                          "(e.g. template_obstacles.sdf for the wall arena)"),
         OpaqueFunction(function=launch_setup)
     ])

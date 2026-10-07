@@ -1,0 +1,10 @@
+# Arena de paredes para probar la evasión de obstáculos (world_template:=template_obstacles.sdf).
+# El dron arranca en el origen; las paredes están al norte (ver world/template_obstacles.sdf).
+origin: [43.47260470380863, -8.178847635546362, 100]
+px4_1:
+  type: drone
+  ns: uav_1
+  vehicle: x500_gimbal_collision
+  id: 0
+  autostart: 4019
+  pose: {xyz: [0, 0, 0], rpy: [0, 0, 0]}
